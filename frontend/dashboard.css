@@ -1,0 +1,1906 @@
+
+/* ========================================
+   1. GLOBAL STYLES
+======================================== */
+
+:root {
+    --primary: #5935f5;
+    --primary-dark: #4523dc;
+    --primary-light: #f0edff;
+    --text: #17182b;
+    --muted: #687493;
+    --border: #e3e7f5;
+    --surface: #ffffff;
+    --background: #f6f7ff;
+    --sidebar-width: 274px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+    background: var(--background);
+    font-size: 14px;
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+    outline: 3px solid #bcb0ff;
+    outline-offset: 3px;
+}
+
+/* ========================================
+   2. MAIN LAYOUT
+======================================== */
+
+.app-layout {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+}
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 25px 14px 18px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    z-index: 10;
+    transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.brand {
+    display: block;
+    padding: 0 17px 28px;
+    border-bottom: 1px solid var(--border);
+}
+
+.brand h2 {
+    font-size: 25px;
+    font-weight: 850;
+    letter-spacing: -1px;
+    white-space: nowrap;
+}
+
+.brand h2 span {
+    color: var(--primary);
+}
+
+.brand p {
+    margin-top: 7px;
+    color: var(--muted);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 27px;
+}
+
+.nav-link {
+    min-height: 57px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 0 17px;
+    border-radius: 12px;
+    color: #46516e;
+    font-size: 15px;
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s;
+}
+
+.nav-icon {
+    width: 24px;
+    text-align: center;
+    font-size: 23px;
+    line-height: 1;
+}
+
+.nav-link:hover {
+    color: var(--primary);
+    background: #f7f5ff;
+}
+
+.nav-link.active {
+    position: relative;
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.nav-link.active::before {
+    content: "";
+    position: absolute;
+    left: -14px;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    border-radius: 0 5px 5px 0;
+    background: var(--primary);
+}
+
+.sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: auto;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+}
+
+/* ========================================
+   3. MAIN AREA AND TOPBAR
+======================================== */
+
+.main-area {
+    min-width: 0;
+}
+
+.topbar {
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    padding: 0 34px;
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.search-box {
+    width: min(100%, 570px);
+    height: 46px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 0 16px;
+    border: 1px solid #e1e5f3;
+    border-radius: 12px;
+    background: #f6f7fc;
+    color: #3d496a;
+}
+
+.search-box > span {
+    font-size: 24px;
+}
+
+.search-box input {
+    width: 100%;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    font-size: 13px;
+}
+
+.search-box input::placeholder {
+    color: #78839f;
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+/* ========================================
+   4. MODERN MOON / SUN THEME TOGGLE
+======================================== */
+
+.dashboard-theme-toggle {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 21px;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+        background 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.dashboard-theme-toggle:hover {
+    transform: translateY(-2px);
+    background: var(--primary-light);
+    color: var(--primary);
+    box-shadow: 0 5px 14px rgba(89, 53, 245, 0.12);
+}
+
+.dashboard-theme-toggle:focus-visible {
+    outline: 3px solid #bcb0ff;
+    outline-offset: 3px;
+}
+
+.dashboard-theme-toggle #themeToggleIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+/* Compatibility with the previous toggle markup */
+.toggle--checkbox,
+.toggle--label,
+.toggle--label-background {
+    display: none;
+}
+
+/* ========================================
+   5. NOTIFICATION BUTTON
+======================================== */
+
+.notification-button {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    background: transparent;
+    color: #303c5e;
+    font-size: 20px;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.notification-button:hover {
+    border-color: var(--border);
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.notification-dot {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 10px;
+    height: 10px;
+    border: 1.5px solid #ffffff;
+    border-radius: 50%;
+    background: #f04455;
+}
+
+/* ========================================
+   6. PROFILE BUTTON
+======================================== */
+
+.profile-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.avatar {
+    width: 41px;
+    height: 41px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #6879bb;
+    color: #ffffff;
+    font-size: 17px;
+}
+
+/* ========================================
+   7. PAGE CONTENT AND HERO
+======================================== */
+
+.page-content {
+    padding: 0 24px 30px;
+    overflow: hidden;
+    background:
+        radial-gradient(
+            ellipse at 85% 5%,
+            rgba(209, 201, 255, 0.48),
+            transparent 36%
+        ),
+        linear-gradient(135deg, #fafaff, #f2f3ff);
+    transition: background 0.25s ease;
+}
+
+.hero {
+    min-height: 290px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 36px 42px 31px;
+    overflow: hidden;
+}
+
+.hero-copy {
+    position: relative;
+    z-index: 2;
+    width: 60%;
+    max-width: 680px;
+}
+
+.eyebrow {
+    margin-bottom: 9px;
+    color: #828ba8;
+    font-size: 15px;
+    font-weight: 750;
+    letter-spacing: 1px;
+}
+
+.hero h1 {
+    font-size: clamp(36px, 3.4vw, 53px);
+    font-weight: 850;
+    line-height: 1.12;
+    letter-spacing: -2px;
+}
+
+.hero h1 span {
+    color: var(--primary);
+}
+
+.hero h2 {
+    margin-top: 8px;
+    color: #4c5878;
+    font-size: clamp(18px, 1.7vw, 25px);
+    font-weight: 700;
+}
+
+.hero-description {
+    max-width: 640px;
+    margin-top: 18px;
+    color: #4e5c7c;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+/* ========================================
+   8. HERO ILLUSTRATION
+======================================== */
+
+.hero-visual {
+    width: 39%;
+    min-width: 280px;
+    height: 235px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.hero-visual::before {
+    content: "";
+    position: absolute;
+    width: 250px;
+    height: 220px;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 48% 52% 54% 46%;
+    background: linear-gradient(
+        140deg,
+        rgba(193, 182, 255, 0.13),
+        rgba(151, 139, 255, 0.22)
+    );
+    border: 1px solid rgba(155, 141, 255, 0.25);
+}
+
+.visual-window {
+    position: absolute;
+    width: 230px;
+    height: 142px;
+    top: 47px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px;
+    border: 1px solid #e4dfff;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 18px 35px rgba(92, 73, 205, 0.13);
+}
+
+.play-icon {
+    width: 72px;
+    height: 69px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    background: linear-gradient(140deg, #a38aff, #6240f4);
+    color: #ffffff;
+    font-size: 30px;
+    box-shadow: 0 8px 18px rgba(89, 53, 245, 0.22);
+}
+
+.visual-lines {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.visual-lines span {
+    height: 8px;
+    border-radius: 10px;
+    background: #d9d3ff;
+}
+
+.visual-lines span:nth-child(2) {
+    width: 80%;
+}
+
+.visual-lines span:nth-child(3) {
+    width: 65%;
+}
+
+.waveform {
+    position: absolute;
+    bottom: 14px;
+    left: 20px;
+    right: 20px;
+    height: 23px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.waveform i {
+    width: 6px;
+    height: 13px;
+    border-radius: 5px;
+    background: #7255fa;
+}
+
+.waveform i:nth-child(3n) {
+    height: 22px;
+}
+
+.waveform i:nth-child(2n) {
+    height: 17px;
+}
+
+.floating-label {
+    position: absolute;
+    z-index: 2;
+    padding: 13px 16px;
+    border: 1px solid rgba(221, 216, 255, 0.9);
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 9px 20px rgba(73, 61, 150, 0.08);
+    font-size: 12px;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.label-summary {
+    top: 7px;
+    left: 3%;
+    color: #6d43ef;
+}
+
+.label-transcript {
+    top: 36px;
+    right: 0;
+    color: #1674e8;
+}
+
+.label-actions {
+    right: -1%;
+    bottom: 32px;
+    color: #0aab8b;
+}
+
+.label-insights {
+    left: 0;
+    bottom: 18px;
+    color: #e99a2c;
+}
+
+/* ========================================
+   9. UPLOAD AND URL PANEL
+======================================== */
+
+.analysis-panel,
+.recent-panel,
+.simple-panel {
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 10px 28px rgba(73, 74, 139, 0.045);
+    transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.analysis-panel {
+    padding: 18px;
+}
+
+.input-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr);
+    align-items: stretch;
+    gap: 8px;
+}
+
+.input-card {
+    min-width: 0;
+    padding: 19px 17px 13px;
+    border-radius: 17px;
+    background: linear-gradient(145deg, #fbfbff, #f8f8ff);
+}
+
+.input-heading {
+    min-height: 83px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.round-icon {
+    width: 76px;
+    height: 76px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font-size: 35px;
+}
+
+.upload-icon {
+    border: 1px solid #d8caff;
+    background: #f1edff;
+    color: #6438f4;
+}
+
+.url-icon {
+    border: 1px solid #cfe2ff;
+    background: #eef5ff;
+    color: #2176ed;
+}
+
+.input-heading h3 {
+    margin-bottom: 7px;
+    font-size: 19px;
+    font-weight: 750;
+}
+
+.input-heading p {
+    color: #64718f;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.choose-file-button {
+    width: 100%;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: 1.5px dashed #8b6aff;
+    border-radius: 12px;
+    background: #fcfbff;
+    color: var(--primary);
+    font-size: 15px;
+    font-weight: 750;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.choose-file-button:hover {
+    background: #f0edff;
+    border-color: var(--primary);
+}
+
+.choose-file-button span {
+    font-size: 22px;
+}
+
+.file-support {
+    margin-top: 12px;
+    color: #6c7898;
+    font-size: 11px;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.url-input {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+    border: 1px solid #dce3f2;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #64718f;
+}
+
+.url-input > span {
+    font-size: 22px;
+}
+
+.url-input input {
+    width: 100%;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.url-input input::placeholder {
+    color: #8290ad;
+}
+
+.or-divider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.or-divider::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    width: 1px;
+    background: #e2e5f4;
+}
+
+.or-divider span {
+    position: relative;
+    z-index: 1;
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #f2f1ff;
+    color: #252942;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.input-feedback {
+    min-height: 0;
+    margin-top: 7px;
+    color: #566487;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.input-feedback:empty {
+    display: none;
+}
+
+/* Selected file preview */
+
+.selected-file-preview {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 14px;
+    padding: 13px;
+    border: 1px solid #e3e7f5;
+    border-radius: 13px;
+    background: #ffffff;
+}
+
+.selected-file-preview[hidden] {
+    display: none;
+}
+
+.selected-file-icon {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+}
+
+.selected-file-icon svg {
+    width: 27px;
+    height: 27px;
+    display: block;
+}
+
+.selected-file-icon.video {
+    background: #eaf2ff;
+    color: #2478f3;
+}
+
+.selected-file-icon.audio {
+    background: #e2fbf1;
+    color: #0bb88c;
+}
+
+.selected-file-icon.link {
+    background: #ffeaed;
+    color: #ef3f50;
+}
+
+.selected-file-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.selected-file-details h4 {
+    overflow-wrap: anywhere;
+    font-size: 13px;
+    font-weight: 700;
+    color: #252942;
+}
+
+.selected-file-details p {
+    margin-top: 5px;
+    font-size: 11px;
+    color: #687493;
+}
+
+.selected-file-type {
+    flex-shrink: 0;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.selected-file-type.video {
+    background: #eaf2ff;
+    color: #2478f3;
+}
+
+.selected-file-type.audio {
+    background: #e2fbf1;
+    color: #0bb88c;
+}
+
+.selected-file-type.link {
+    background: #ffeaed;
+    color: #ef3f50;
+}
+
+/* Dark mode */
+body.dark-mode .selected-file-preview {
+    background: #202336;
+    border-color: #30354b;
+}
+
+body.dark-mode .selected-file-details h4 {
+    color: #edf0fa;
+}
+
+body.dark-mode .selected-file-details p {
+    color: #aab2ca;
+}
+
+.analyze-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.analyze-button {
+    min-width: 340px;
+    min-height: 59px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 13px;
+    background: linear-gradient(105deg, #7046ff, #4a1cf1);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 750;
+    box-shadow: 0 9px 20px rgba(89, 53, 245, 0.20);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.analyze-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(89, 53, 245, 0.28);
+}
+
+.analyze-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.analyze-button span {
+    font-size: 20px;
+}
+
+/* ========================================
+   10. RECENT MEETINGS
+======================================== */
+
+.recent-panel {
+    margin-top: 17px;
+    padding: 19px 18px 17px;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin: 0 2px 18px;
+}
+
+.section-heading h2 {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.section-heading h2 span {
+    color: #38466c;
+    font-size: 25px;
+}
+
+.view-all-button {
+    border: none;
+    background: transparent;
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.view-all-button:hover {
+    color: var(--primary-dark);
+}
+
+.meeting-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.meeting-card {
+    min-width: 0;
+    min-height: 126px;
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    padding: 16px;
+    border: 1px solid #e5e9f6;
+    border-radius: 16px;
+    background: #ffffff;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.meeting-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 9px 22px rgba(48, 54, 108, 0.07);
+}
+
+.meeting-type {
+    width: 72px;
+    height: 76px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    font-size: 28px;
+}
+
+.video-type {
+    background: #eaf2ff;
+    color: #2478f3;
+}
+
+.audio-type {
+    background: #e2fbf1;
+    color: #0bb88c;
+}
+
+.link-type {
+    background: #ffeaed;
+    color: #ef3f50;
+}
+
+.meeting-details {
+    flex: 1;
+    min-width: 0;
+    padding-top: 5px;
+}
+
+.meeting-details h3 {
+    overflow-wrap: anywhere;
+    font-size: 13px;
+    font-weight: 750;
+    line-height: 1.5;
+}
+
+.meeting-details p {
+    margin-top: 8px;
+    color: #697695;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.meeting-tag {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 6px 13px;
+    border-radius: 9px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.video-tag {
+    background: #ece8ff;
+    color: #5935f5;
+}
+
+.audio-tag {
+    background: #dff9ef;
+    color: #08a879;
+}
+
+.link-tag {
+    background: #ffe5e8;
+    color: #e7354b;
+}
+
+.meeting-menu {
+    border: none;
+    background: transparent;
+    color: #65708f;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.empty-state {
+    padding: 20px 8px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* ========================================
+   11. ABOUT AND SETTINGS
+======================================== */
+
+.simple-panel {
+    margin-top: 18px;
+    padding: 25px;
+}
+
+.simple-panel h2 {
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.simple-panel p {
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+/* ========================================
+   12. DARK MODE
+======================================== */
+
+body.dark-mode {
+    --text: #edf0fa;
+    --muted: #aab2ca;
+    --border: #30354b;
+    --surface: #1b1e2c;
+    --background: #11131e;
+    --primary-light: #2b274a;
+
+    color: var(--text);
+    background: var(--background);
+    color-scheme: dark;
+}
+
+body.dark-mode .sidebar,
+body.dark-mode .topbar,
+body.dark-mode .analysis-panel,
+body.dark-mode .recent-panel,
+body.dark-mode .simple-panel,
+body.dark-mode .meeting-card {
+    background: var(--surface);
+    border-color: var(--border);
+}
+
+body.dark-mode .page-content {
+    background: linear-gradient(135deg, #151725, #1d1c32);
+}
+
+body.dark-mode .brand p,
+body.dark-mode .nav-link,
+body.dark-mode .hero h2,
+body.dark-mode .hero-description,
+body.dark-mode .input-heading p,
+body.dark-mode .file-support,
+body.dark-mode .meeting-details p {
+    color: var(--muted);
+}
+
+body.dark-mode .nav-link.active,
+body.dark-mode .nav-link:hover {
+    background: #2b274a;
+    color: #b6a7ff;
+}
+
+body.dark-mode .search-box,
+body.dark-mode .input-card,
+body.dark-mode .url-input {
+    background: #202336;
+    border-color: var(--border);
+}
+
+body.dark-mode .search-box {
+    color: var(--muted);
+}
+
+body.dark-mode .search-box input,
+body.dark-mode .url-input input {
+    color: var(--text);
+}
+
+body.dark-mode .search-box input::placeholder,
+body.dark-mode .url-input input::placeholder {
+    color: #aab2ca;
+}
+
+body.dark-mode .input-heading h3,
+body.dark-mode .section-heading h2,
+body.dark-mode .meeting-details h3,
+body.dark-mode .simple-panel h2,
+body.dark-mode .profile-button {
+    color: var(--text);
+}
+
+body.dark-mode .section-heading h2 span {
+    color: #c0c8e2;
+}
+
+body.dark-mode .choose-file-button {
+    background: #26243c;
+    border-color: #7160c7;
+    color: #c5baff;
+}
+
+body.dark-mode .choose-file-button:hover {
+    background: #302b4d;
+}
+
+body.dark-mode .or-divider::before {
+    background: var(--border);
+}
+
+body.dark-mode .or-divider span {
+    background: #2b274a;
+    color: var(--text);
+}
+
+body.dark-mode .visual-window,
+body.dark-mode .floating-label {
+    background: #25283b;
+    border-color: var(--border);
+}
+
+body.dark-mode .notification-button {
+    color: #e4e8f7;
+}
+
+body.dark-mode .notification-button:hover {
+    background: #2b274a;
+    border-color: #45405f;
+}
+
+body.dark-mode .notification-dot {
+    border-color: var(--surface);
+}
+
+body.dark-mode .meeting-menu {
+    color: var(--muted);
+}
+
+body.dark-mode .input-feedback {
+    color: #c2c9df;
+}
+
+body.dark-mode .empty-state {
+    color: var(--muted);
+}
+
+body.dark-mode .dashboard-theme-toggle {
+    background: #25283b;
+    border-color: #41465d;
+    color: #f4d779;
+}
+
+body.dark-mode .dashboard-theme-toggle:hover {
+    background: #302b4d;
+    border-color: #7160c7;
+    color: #ffffff;
+}
+
+/* ========================================
+   13. RESPONSIVE TABLET
+======================================== */
+
+@media (max-width: 1200px) {
+    :root {
+        --sidebar-width: 235px;
+    }
+
+    .topbar {
+        padding: 0 22px;
+    }
+
+    .hero {
+        padding: 30px 25px;
+    }
+
+    .input-heading {
+        gap: 12px;
+    }
+
+    .round-icon {
+        width: 62px;
+        height: 62px;
+        font-size: 29px;
+    }
+
+    .meeting-card {
+        padding: 12px;
+        gap: 9px;
+    }
+
+    .meeting-type {
+        width: 57px;
+        height: 62px;
+    }
+}
+
+@media (max-width: 950px) {
+    .app-layout {
+        grid-template-columns: 205px minmax(0, 1fr);
+    }
+
+    .brand {
+        padding-left: 8px;
+    }
+
+    .brand h2 {
+        font-size: 20px;
+    }
+
+    .brand p {
+        font-size: 10px;
+    }
+
+    .hero {
+        min-height: 270px;
+    }
+
+    .hero-copy {
+        width: 65%;
+    }
+
+    .hero-visual {
+        min-width: 210px;
+        transform: scale(0.85);
+        transform-origin: center right;
+    }
+
+    .input-columns {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .or-divider {
+        min-height: 38px;
+    }
+
+    .or-divider::before {
+        top: 50%;
+        bottom: auto;
+        left: 10%;
+        right: 10%;
+        width: auto;
+        height: 1px;
+    }
+
+    .meeting-list {
+        grid-template-columns: 1fr;
+    }
+
+    .meeting-card {
+        min-height: 105px;
+    }
+
+    .meeting-type {
+        width: 65px;
+        height: 65px;
+    }
+}
+
+/* ========================================
+   14. RESPONSIVE MOBILE
+======================================== */
+
+@media (max-width: 650px) {
+    .app-layout {
+        display: block;
+    }
+
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        padding: 15px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+        padding: 0 4px 14px;
+        border-bottom: none;
+    }
+
+    .brand h2 {
+        font-size: 23px;
+    }
+
+    .brand p {
+        font-size: 11px;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        gap: 5px;
+        margin-top: 12px;
+        overflow-x: auto;
+        padding-bottom: 3px;
+    }
+
+    .nav-link {
+        min-height: 43px;
+        flex-shrink: 0;
+        gap: 7px;
+        padding: 0 10px;
+        font-size: 12px;
+    }
+
+    .nav-icon {
+        width: auto;
+        font-size: 17px;
+    }
+
+    .nav-link.active::before {
+        left: 0;
+        top: auto;
+        bottom: -2px;
+        width: 100%;
+        height: 3px;
+        border-radius: 3px;
+    }
+
+    .sidebar-bottom {
+        display: none;
+    }
+
+    .topbar {
+        min-height: 70px;
+        height: auto;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 13px 16px;
+    }
+
+    .search-box {
+        order: 2;
+        width: 100%;
+    }
+
+    .topbar-actions {
+        width: 100%;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .dashboard-theme-toggle {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+        font-size: 20px;
+    }
+
+    .notification-button {
+        width: 40px;
+        height: 40px;
+    }
+
+    .page-content {
+        padding: 0 12px 22px;
+    }
+
+    .hero {
+        min-height: auto;
+        padding: 35px 8px 18px;
+    }
+
+    .hero-copy {
+        width: 100%;
+    }
+
+    .hero h1 {
+        font-size: 37px;
+    }
+
+    .hero h2 {
+        font-size: 18px;
+    }
+
+    .hero-description {
+        font-size: 13px;
+    }
+
+    .hero-visual {
+        display: none;
+    }
+
+    .analysis-panel {
+        padding: 10px;
+        border-radius: 16px;
+    }
+
+    .input-card {
+        padding: 15px 12px;
+    }
+
+    .input-heading {
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .round-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+    }
+
+    .input-heading h3 {
+        font-size: 16px;
+    }
+
+    .input-heading p {
+        font-size: 12px;
+    }
+
+    .choose-file-button,
+    .url-input {
+        min-height: 49px;
+        height: auto;
+    }
+
+    .url-input {
+        min-height: 49px;
+    }
+
+    .url-input input {
+        padding: 12px 0;
+    }
+
+    .analyze-button {
+        width: 100%;
+        min-width: 0;
+        min-height: 54px;
+        font-size: 14px;
+    }
+
+    .recent-panel {
+        padding: 15px 10px;
+    }
+
+    .section-heading h2 {
+        font-size: 16px;
+    }
+
+    .meeting-card {
+        padding: 11px;
+        gap: 10px;
+    }
+
+    .meeting-type {
+        width: 48px;
+        height: 53px;
+        font-size: 22px;
+    }
+
+    .meeting-details h3 {
+        font-size: 12px;
+    }
+
+    .meeting-details p {
+        font-size: 10px;
+    }
+
+    .simple-panel {
+        padding: 18px;
+    }
+}
+
+/* ========================================
+   15. SMALL MOBILE SCREENS
+======================================== */
+
+@media (max-width: 380px) {
+    .topbar {
+        padding: 12px;
+    }
+
+    .topbar-actions {
+        gap: 6px;
+    }
+
+    .profile-button {
+        gap: 6px;
+        font-size: 11px;
+    }
+
+    .avatar {
+        width: 34px;
+        height: 34px;
+        font-size: 14px;
+    }
+
+    .hero h1 {
+        font-size: 31px;
+    }
+
+    .login-options {
+        flex-wrap: wrap;
+    }
+}
+
+
+/* =========================================
+   MEETMIND AI — DARK MODE FIX
+   ========================================= */
+
+/* Main page */
+html.dark-mode,
+body.dark-mode {
+    background: #11131e !important;
+    color: #edf0fa;
+}
+
+/* Main layout surfaces */
+body.dark-mode .app-layout,
+body.dark-mode .main-area {
+    background: #11131e;
+    color: #edf0fa;
+}
+
+body.dark-mode .sidebar,
+body.dark-mode .topbar,
+body.dark-mode .analysis-panel,
+body.dark-mode .recent-panel,
+body.dark-mode .simple-panel {
+    background: #1b1e2c !important;
+    border-color: #30354b !important;
+    color: #edf0fa;
+}
+
+/* Main content background */
+body.dark-mode .page-content {
+    background: linear-gradient(135deg, #151725, #1d1c32) !important;
+}
+
+/* Cards and input areas */
+body.dark-mode .input-card,
+body.dark-mode .meeting-card {
+    background: #202336 !important;
+    border-color: #30354b !important;
+    color: #edf0fa;
+}
+
+body.dark-mode .search-box,
+body.dark-mode .url-input {
+    background: #202336 !important;
+    border-color: #30354b !important;
+    color: #edf0fa;
+}
+
+body.dark-mode .search-box input,
+body.dark-mode .url-input input {
+    color: #edf0fa !important;
+}
+
+body.dark-mode .search-box input::placeholder,
+body.dark-mode .url-input input::placeholder {
+    color: #aab2ca !important;
+}
+
+/* Headings and text */
+body.dark-mode .hero h1,
+body.dark-mode .hero h2,
+body.dark-mode .hero-description,
+body.dark-mode .input-heading h3,
+body.dark-mode .input-heading p,
+body.dark-mode .section-heading h2,
+body.dark-mode .meeting-details h3,
+body.dark-mode .meeting-details p,
+body.dark-mode .simple-panel h2,
+body.dark-mode .simple-panel p,
+body.dark-mode .brand p,
+body.dark-mode .nav-link,
+body.dark-mode .profile-button,
+body.dark-mode .empty-state {
+    color: #edf0fa;
+}
+
+/* Sidebar navigation */
+body.dark-mode .nav-link:hover,
+body.dark-mode .nav-link.active {
+    background: #2b274a !important;
+    color: #b6a7ff !important;
+}
+
+/* Theme toggle */
+.dashboard-theme-toggle {
+    cursor: pointer;
+    pointer-events: auto;
+    position: relative;
+    z-index: 2;
+}
+
+.dashboard-theme-toggle #themeToggleIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dashboard-theme-toggle #themeToggleIcon svg {
+    width: 21px;
+    height: 21px;
+    display: block;
+}
+
+body.dark-mode .dashboard-theme-toggle {
+    background: #25283b !important;
+    border-color: #41465d !important;
+    color: #f4d779 !important;
+}
+
+/* Notification button */
+body.dark-mode .notification-button {
+    color: #edf0fa;
+}
+
+/* Keep the light theme unchanged */
+body:not(.dark-mode) {
+    color-scheme: light;
+}
+
+body.dark-mode {
+    color-scheme: dark;
+}
+
+
+/* MEETMIND AI - Consistent icons */
+
+.sidebar .nav-icon {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.sidebar .nav-icon svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+.topbar-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.topbar-icon svg {
+    width: 21px;
+    height: 21px;
+    display: block;
+}
+
+.dashboard-theme-toggle svg {
+    width: 21px;
+    height: 21px;
+    display: block;
+}
+
+
+
+/* ========================================
+   16. FIXED DESKTOP DASHBOARD CHROME
+   Keeps the sidebar and top bar visible while
+   the dashboard content scrolls independently.
+======================================== */
+
+@media (min-width: 651px) {
+    html,
+    body {
+        min-height: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .app-layout {
+        display: block;
+        min-height: 100vh;
+        height: 100vh;
+    }
+
+    .sidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        width: var(--sidebar-width);
+        height: 100vh;
+        height: 100dvh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        z-index: 1200;
+    }
+
+    .main-area {
+        margin-left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+        height: 100vh;
+        height: 100dvh;
+        min-width: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
+    }
+
+    .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 1100;
+        min-height: 76px;
+        background: var(--surface);
+        box-shadow: 0 1px 0 var(--border);
+    }
+
+    .page-content {
+        min-width: 0;
+        overflow: visible;
+    }
+}
+
+/* Mobile keeps the existing stacked navigation layout. */
+@media (max-width: 650px) {
+    html,
+    body {
+        height: auto;
+        min-height: 100%;
+        overflow: auto;
+    }
+
+    .app-layout {
+        display: block;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        position: static;
+        inset: auto;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    .main-area {
+        margin-left: 0;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 1100;
+    }
+}
+
+
+/* =========================================
+   MEETMIND AI - STABLE SHARED TOPBAR
+========================================= */
+
+.app-layout > .main-area > .topbar {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 78px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 0 30px;
+    flex-shrink: 0;
+}
+
+/* Keep the action buttons aligned */
+.app-layout > .main-area > .topbar .topbar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-shrink: 0;
+    min-width: max-content;
+}
+
+/* Keep theme and notification buttons the same size */
+.app-layout > .main-area > .topbar .dashboard-theme-toggle,
+.app-layout > .main-area > .topbar .notification-button {
+    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    flex: 0 0 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+/* Keep the profile area from shrinking or shifting */
+.app-layout > .main-area > .topbar .profile-button {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 9px;
+    min-height: 48px;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+/* Keep avatar dimensions consistent */
+.app-layout > .main-area > .topbar .avatar {
+    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    flex: 0 0 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* Keep the topbar responsive */
+@media (max-width: 700px) {
+    .app-layout > .main-area > .topbar {
+        gap: 10px;
+        padding: 0 14px;
+    }
+
+    .app-layout > .main-area > .topbar .topbar-actions {
+        gap: 6px;
+    }
+}
+
+
+
+/* Prevent horizontal shifting when page content needs a scrollbar */
+.app-layout > .main-area {
+    scrollbar-gutter: stable;
+}
+
+/* Keep the topbar height and action alignment consistent */
+.app-layout > .main-area > .topbar {
+    box-sizing: border-box;
+    min-height: 78px;
+    flex-shrink: 0;
+}
+
+.app-layout > .main-area > .topbar .topbar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+/* Prevent profile text and avatar from changing size */
+.app-layout > .main-area > .topbar .profile-button {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.app-layout > .main-area > .topbar .avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    flex-shrink: 0;
+}
+
+.section-heading h2 .recent-meetings-icon {
+    width: 10px !important;
+    height: 10px !important;
+    min-width: 10px !important;
+    max-width: 10px !important;
+    flex: 0 0 10px;
+    display: inline-block;
+    margin: 0;
+}
+
+.section-heading h2 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}

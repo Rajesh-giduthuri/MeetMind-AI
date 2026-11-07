@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="/static/meetmind-logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f5ff">
+
+    <title>Meeting Analysis | MEETMIND AI</title>
+
+    <link rel="stylesheet" href="/static/dashboard.css">
+    <link rel="stylesheet" href="/static/pages.css">
+
+    <script>
+        (function () {
+            try {
+                const theme =
+                    localStorage.getItem("meetmind-auth-theme") ||
+                    localStorage.getItem("meetingAITheme") ||
+                    "light";
+
+                document.documentElement.classList.toggle(
+                    "dark-mode",
+                    theme === "dark"
+                );
+
+                document.documentElement.style.colorScheme =
+                    theme === "dark" ? "dark" : "light";
+            } catch (error) {}
+        })();
+    </script>
+
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="pages.css">
+
+    <style>
+        /* Theme */
+        html.dark-mode,
+        html.dark-mode body {
+            background-color: #191d2c;
+            color-scheme: dark;
+        }
+
+        /* Main layout */
+        .analysis-page {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 28px;
+            color: var(--text, #17182b);
+        }
+
+        .analysis-heading {
+            margin-bottom: 20px;
+        }
+
+        .analysis-heading h1 {
+            margin: 0 0 8px;
+            overflow-wrap: anywhere;
+        }
+
+        .analysis-heading p {
+            color: var(--muted, #6e748d);
+            line-height: 1.6;
+        }
+
+        .analysis-status {
+            margin: 16px 0;
+            padding: 13px 15px;
+            border-radius: 9px;
+            background: var(--background, #f7f8ff);
+            color: var(--muted, #6e748d);
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .analysis-workspace {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 22px;
+        }
+
+        .analysis-left {
+            min-width: 0;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .analysis-left > .analysis-card:last-child {
+            grid-column: 1 / -1;
+        }
+
+        .analysis-right {
+            min-width: 0;
+            position: static;
+        }
+
+        /* Cards */
+        .analysis-card {
+            min-width: 0;
+            padding: 22px;
+            border: 1px solid var(--border, #dfe3ef);
+            border-radius: 14px;
+            background: var(--white, #fff);
+            color: var(--text, #17182b);
+            box-shadow: 0 8px 26px rgba(35, 30, 80, .045);
+        }
+
+        .analysis-card h2 {
+            margin: 0 0 18px;
+            font-size: 19px;
+            color: inherit;
+        }
+
+        .analysis-subheading {
+            margin: 16px 0 8px;
+        }
+
+        .analysis-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .analysis-actions button,
+        .chat-send,
+        .voice-button {
+            border: 1px solid var(--border, #dfe3ef);
+            border-radius: 10px;
+            padding: 9px 12px;
+            background: var(--white, #fff);
+            color: var(--text, #17182b);
+            cursor: pointer;
+        }
+
+        .analysis-actions button:hover,
+        .voice-button:hover {
+            border-color: var(--primary, #5935f5);
+        }
+
+        /* Recording */
+        .media-placeholder {
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            padding: 20px;
+            border-radius: 10px;
+            background: var(--background, #f7f8ff);
+            text-align: center;
+            overflow-wrap: anywhere;
+        }
+
+        .media-player {
+            display: block;
+            width: 100%;
+            max-height: 420px;
+            border-radius: 10px;
+            background: #111;
+        }
+
+        .media-placeholder a {
+            color: #6850f5;
+            overflow-wrap: anywhere;
+        }
+
+        .media-placeholder p {
+            line-height: 1.6;
+        }
+
+        .pdf-preview {
+            width: 100%;
+            height: 420px;
+            border: 1px solid var(--border, #dfe3ef);
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        /* Transcript */
+        .transcript-box {
+            max-height: 520px;
+            overflow: auto;
+            white-space: pre-wrap;
+            line-height: 1.75;
+            overflow-wrap: anywhere;
+        }
+
+        .transcript-line {
+            padding: 7px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .transcript-line:hover {
+            background: var(--primary-light, #f0edff);
+        }
+
+        .summary-placeholder,
+        .transcript-placeholder {
+            color: var(--muted, #6e748d);
+            line-height: 1.8;
+            overflow-wrap: anywhere;
+        }
+
+        .notes-area {
+            width: 100%;
+            min-height: 100px;
+            border: 1px solid var(--border, #dfe3ef);
+            border-radius: 10px;
+            padding: 12px;
+            resize: vertical;
+            background: var(--white, #fff);
+            color: var(--text, #17182b);
+            font: inherit;
+        }
+
+        /* Header controls */
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .dashboard-theme-toggle {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 1px solid #dfe3ef;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .9);
+            color: #34354a;
+            cursor: pointer;
+            transition: background .2s ease, color .2s ease,
+                border-color .2s ease, transform .2s ease;
+        }
+
+        .dashboard-theme-toggle:hover {
+            border-color: #5935f5;
+            transform: translateY(-1px);
+        }
+
+        .dashboard-theme-toggle svg {
+            display: block;
+            width: 21px;
+            height: 21px;
+        }
+
+        .notification-button {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            background: transparent;
+            color: var(--text, #34354a);
+            cursor: pointer;
+        }
+
+        .notification-button:hover {
+            background: var(--primary-light, #f0edff);
+        }
+
+        .notification-button svg {
+            display: block;
+            width: 21px;
+            height: 21px;
+        }
+
+        .profile-section {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 6px 10px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text, #17182b);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .profile-avatar {
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #5935f5;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        /* Sidebar icons */
+        .sidebar-nav .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-nav .nav-icon,
+        .sidebar-bottom .nav-icon {
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-nav .nav-icon svg,
+        .sidebar-bottom .nav-icon svg {
+            width: 19px;
+            height: 19px;
+            display: block;
+        }
+
+        /* Professional chat section */
+        .chat-section {
+            width: 100%;
+        }
+
+        .chat-heading {
+            margin-bottom: 14px;
+        }
+
+        .chat-heading h2 {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin: 0 0 8px;
+            color: var(--text, #17182b);
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .chat-heading-icon {
+            font-size: 21px;
+        }
+
+        .chat-heading p {
+            margin: 0;
+            color: var(--muted, #6e748d);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .chat-card {
+            display: flex;
+            flex-direction: column;
+            height: 480px;
+            min-height: 350px;
+            padding: 18px 20px;
+            border: 1px solid var(--border, #dfe3ef);
+            border-radius: 15px;
+            background: var(--white, #fff);
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            padding: 4px 5px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-bubble {
+            max-width: 78%;
+            padding: 15px 18px;
+            border-radius: 13px;
+            font-size: 15px;
+            line-height: 1.65;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .chat-bubble.assistant {
+            align-self: flex-start;
+            background: #f0f3f8;
+            color: #263247;
+            border: 1px solid #e0e6f0;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-bubble.user {
+            align-self: flex-end;
+            background: #eaf1ff;
+            color: #19345f;
+            border: 1px solid #d5e3ff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-composer {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 112px 112px;
+            gap: 12px;
+            align-items: center;
+            margin-top: 14px;
+            padding: 12px;
+            border: 1px solid var(--border, #dfe3ef);
+            border-radius: 14px;
+            background: var(--white, #fff);
+        }
+
+        .chat-composer input {
+            width: 100%;
+            min-width: 0;
+            height: 46px;
+            padding: 12px 14px;
+            border: 1px solid var(--border, #dfe3ef);
+            border-radius: 10px;
+            outline: none;
+            background: var(--white, #fff);
+            color: var(--text, #17182b);
+            font: inherit;
+            font-size: 14px;
+        }
+
+        .chat-composer input:focus {
+            border-color: #5935f5;
+            box-shadow: 0 0 0 3px #5935f51c;
+        }
+
+        .voice-button,
+        .chat-send {
+            height: 46px;
+            border: none;
+            border-radius: 10px;
+            background: #0d9b8e;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s ease, transform .2s ease;
+        }
+
+        .voice-button:hover,
+        .chat-send:hover {
+            background: #087e74;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .chat-composer-tools {
+            grid-column: 1 / -1;
+            min-height: 15px;
+            padding-left: 3px;
+            font-size: 11px;
+            color: var(--muted, #6e748d);
+        }
+
+        .input-feedback {
+            color: var(--muted, #6e748d);
+            font-size: 12px;
+        }
+
+        /* Dark mode */
+        body.dark-mode,
+        html.dark-mode body {
+            background-color: #191d2c;
+            color: #f1f3ff;
+        }
+
+        body.dark-mode .analysis-page,
+        body.dark-mode .analysis-card,
+        body.dark-mode .analysis-card h2 {
+            color: #f1f3ff;
+        }
+
+        body.dark-mode .analysis-card {
+            background: #222638;
+            border-color: #3b4258;
+        }
+
+        body.dark-mode .analysis-heading p,
+        body.dark-mode .summary-placeholder,
+        body.dark-mode .transcript-placeholder {
+            color: #b7bfd4;
+        }
+
+        body.dark-mode .analysis-status,
+        body.dark-mode .media-placeholder {
+            background: #191d2c;
+            color: #dce1f2;
+        }
+
+        body.dark-mode .notes-area {
+            background: #191d2c;
+            color: #f1f3ff;
+            border-color: #3b4258;
+        }
+
+        body.dark-mode .dashboard-theme-toggle {
+            background: #24253c;
+            color: #f1f1fc;
+            border-color: #444661;
+        }
+
+        body.dark-mode .notification-button,
+        body.dark-mode .profile-section {
+            color: #f1f1fc;
+        }
+
+        body.dark-mode .chat-heading h2 {
+            color: #f1f3ff;
+        }
+
+        body.dark-mode .chat-heading p {
+            color: #b7bfd4;
+        }
+
+        body.dark-mode .chat-card,
+        body.dark-mode .chat-composer {
+            background: #222638;
+            border-color: #3b4258;
+        }
+
+        body.dark-mode .chat-bubble.assistant {
+            background: #2b3045;
+            border-color: #414962;
+            color: #edf0fa;
+        }
+
+        body.dark-mode .chat-bubble.user {
+            background: #293858;
+            border-color: #40577e;
+            color: #edf3ff;
+        }
+
+        body.dark-mode .chat-composer input {
+            background: #191d2c;
+            border-color: #3b4258;
+            color: #f1f3ff;
+        }
+
+        /* Focus */
+        .dashboard-theme-toggle:focus-visible,
+        .notification-button:focus-visible,
+        .chat-send:focus-visible,
+        .voice-button:focus-visible,
+        .back-button:focus-visible {
+            outline: 3px solid #bcb0ff;
+            outline-offset: 3px;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .analysis-left {
+                grid-template-columns: 1fr;
+            }
+
+            .analysis-left > .analysis-card:last-child {
+                grid-column: auto;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .analysis-page {
+                padding: 16px;
+            }
+
+            .analysis-card {
+                padding: 16px;
+            }
+
+            .chat-card {
+                height: 420px;
+                padding: 12px;
+            }
+
+            .chat-bubble {
+                max-width: 92%;
+                font-size: 14px;
+            }
+
+            .chat-composer {
+                grid-template-columns: minmax(0, 1fr) 52px;
+            }
+
+            .chat-composer input {
+                grid-column: 1 / -1;
+            }
+
+            .voice-button,
+            .chat-send {
+                width: 100%;
+            }
+
+            .topbar-actions {
+                gap: 6px;
+            }
+
+            .profile-section > span:last-child {
+                display: none;
+            }
+        }
+        /* AI Summary - Readability and Layout */
+        #summaryContainer {
+            color: #202124;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        #summaryContainer h3 {
+            color: #202124;
+            font-size: 17px;
+            font-weight: 700;
+            margin: 24px 0 10px;
+        }
+
+        #summaryContainer h3:first-child {
+            margin-top: 0;
+        }
+
+        #summaryContainer p {
+            color: #303030;
+            line-height: 1.8;
+            margin: 0 0 16px;
+        }
+
+        #summaryContainer ul,
+        #summaryContainer ol {
+            margin: 8px 0 20px;
+            padding-left: 25px;
+        }
+
+        #summaryContainer li {
+            color: #303030;
+            padding: 4px 0;
+            line-height: 1.7;
+        }
+
+        /* Dark mode */
+        body.dark-mode #summaryContainer,
+        body.dark-mode #summaryContainer h3,
+        body.dark-mode #summaryContainer p,
+        body.dark-mode #summaryContainer li {
+            color: #f1f3ff;
+        }
+        /* Action Items Table */
+        #actionItems {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .analysis-table {
+            width: 100%;
+            min-width: 560px;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .analysis-table th,
+        .analysis-table td {
+            padding: 13px 15px;
+            text-align: left;
+            vertical-align: top;
+            border-bottom: 1px solid var(--border, #dfe3ef);
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .analysis-table th {
+            background: var(--background, #f7f8ff);
+            font-weight: 600;
+        }
+
+        .analysis-table th:nth-child(1),
+        .analysis-table td:nth-child(1) {
+            width: 55%;
+        }
+
+        .analysis-table th:nth-child(2),
+        .analysis-table td:nth-child(2) {
+            width: 22%;
+        }
+
+        .analysis-table th:nth-child(3),
+        .analysis-table td:nth-child(3) {
+            width: 23%;
+        }
+
+        .analysis-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Dark mode */
+        body.dark-mode .analysis-table th {
+            background: #191d2c;
+        }
+
+        body.dark-mode .analysis-table th,
+        body.dark-mode .analysis-table td {
+            border-color: #3b4258;
+        }
+        .qa-timestamp {
+            display: block;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #64748b;
+            text-align: right;
+        }
+
+        body.dark-mode .qa-timestamp {
+            color: #cbd5e1;
+        }
+        /* New Meeting Button - Match My Meetings Page */
+        .new-meeting-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 9px;
+            background: #6850f5;
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .new-meeting-btn:hover {
+            background: #5940e8;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        (function () {
+            try {
+                const theme =
+                    localStorage.getItem("meetmind-auth-theme") ||
+                    localStorage.getItem("meetingAITheme") ||
+                    "light";
+
+                document.body.classList.toggle(
+                    "dark-mode",
+                    theme === "dark"
+                );
+            } catch (error) {}
+        })();
+    </script>
+
+    <div class="app-layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            
+            <a href="/home" class="brand">
+                <h2>MEETMIND <span>AI</span></h2>
+                <p>AI Meeting Intelligence System</p>
+            </a>
+
+            <nav class="sidebar-nav" aria-label="Main navigation">
+
+                <a href="/home" class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="4" width="6" height="6" rx="1"/>
+                            <rect x="14" y="4" width="6" height="6" rx="1"/>
+                            <rect x="4" y="14" width="6" height="6" rx="1"/>
+                            <rect x="14" y="14" width="6" height="6" rx="1"/>
+                        </svg>
+                    </span>
+                    <span>Home</span>
+                </a>
+
+                <a href="meetings.html" class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="5" width="13" height="14" rx="2"/>
+                            <path d="m16 10 5-3v10l-5-3z"/>
+                        </svg>
+                    </span>
+                    <span>Meetings</span>
+                </a>
+
+                <a href="history.html" class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/>
+                            <path d="M3 3v5h5"/>
+                            <path d="M12 7v5l3 2"/>
+                        </svg>
+                    </span>
+                    <span>View History</span>
+                </a>
+
+                <a href="about.html" class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="9"/>
+                            <path d="M12 11v5"/>
+                            <path d="M12 7h.01"/>
+                        </svg>
+                    </span>
+                    <span>About</span>
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <a href="settings.html" class="nav-link">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             viewBox="0 0 50 50"
+                             width="22" height="22"
+                             fill="currentColor">
+                            <path d="M22.19 2a1 1 0 0 0-.98.83L20.2 8.79c-1.19.35-2.3.81-3.37 1.38l-4.96-3.49a1 1 0 0 0-1.28.11l-3.9 3.9a1 1 0 0 0-.11 1.28l3.49 4.96c-.57 1.05-1.03 2.17-1.38 3.36l-5.85.92A1 1 0 0 0 2 22.19v5.5a1 1 0 0 0 .83.99l5.96 1.01c.35 1.19.81 2.3 1.37 3.36l-3.48 4.86a1 1 0 0 0 .11 1.29l3.9 3.9a1 1 0 0 0 1.28.11l4.96-3.49c1.05.57 2.18 1.03 3.37 1.38l1.01 5.96a1 1 0 0 0 .99.84h5.5a1 1 0 0 0 .98-.82l1.1-5.98c1.19-.35 2.31-.81 3.38-1.38l4.96 3.49a1 1 0 0 0 1.28-.11l3.9-3.9a1 1 0 0 0 .1-1.29l-3.57-4.96c.57-1.04 1.02-2.13 1.37-3.26l5.87-1.01a1 1 0 0 0 .84-.99v-5.5a1 1 0 0 0-.84-.98l-5.97-1.01c-.34-1.13-.8-2.23-1.37-3.27l3.49-4.96a1 1 0 0 0-.11-1.28l-3.9-3.9a1 1 0 0 0-1.29-.1l-4.96 3.58c-1.05-.57-2.17-1.03-3.36-1.38l-1.01-6.06a1 1 0 0 0-.99-.83zM25 17a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/>
+                        </svg>
+                    </span>
+                    <span>Settings</span>
+                </a>
+
+                <a href="/" class="nav-link" id="logoutLink">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10 17l5-5-5-5"/>
+                            <path d="M15 12H3"/>
+                            <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/>
+                        </svg>
+                    </span>
+                    <span>Logout</span>
+                </a>
+
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-area">
+
+            <header class="topbar">
+                <h3>Meeting Analysis</h3>
+
+                <div class="topbar-actions">
+
+                    <button
+                        type="button"
+                        id="themeToggle"
+                        class="dashboard-theme-toggle"
+                        aria-label="Switch to dark mode"
+                        aria-pressed="false"
+                        title="Switch theme">
+                        <span id="themeToggleIcon" aria-hidden="true"></span>
+                    </button>
+
+                    <button
+                        id="notificationButton"
+                        class="notification-button"
+                        type="button"
+                        aria-label="Notifications"
+                        title="Notifications">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round"
+                             aria-hidden="true">
+                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                            <path d="M10 21h4"/>
+                        </svg>
+                    </button>
+
+                    <div class="profile-section">
+                        <span class="profile-avatar">S</span>
+                        <span>My Workspace</span>
+                    </div>
+
+                </div>
+            </header>
+
+            <section class="analysis-page">
+
+                <div class="analysis-heading">
+                    <h1 id="meetingTitle">Meeting Analysis</h1>
+                    <p id="meetingDetails">
+                        Review the transcript, summary, action items, and ask follow-up questions.
+                    </p>
+                    <a href="/home" class="new-meeting-btn">+ Analyze New Meeting</a>
+                </div>
+
+                <div id="analysisStatus" class="analysis-status" role="status">
+                    Loading meeting details…
+                </div>
+
+                <div class="analysis-workspace">
+
+                    <div class="analysis-left">
+
+                        <!-- Meeting Recording -->
+                        <section class="analysis-card">
+                            <h2>Meeting Recording</h2>
+                            <div id="mediaContainer" class="media-placeholder">
+                                Loading meeting file…
+                            </div>
+                        </section>
+
+                        
+                        <!-- Meeting Transcript -->
+                        <section class="analysis-card">
+                            <h2>Meeting Transcript</h2>
+
+                            <div id="transcriptContainer" class="transcript-box">
+                                Transcript will appear here after analysis.
+                            </div>
+                        </section>
+
+                        <!-- AI Summary -->
+                        <section class="analysis-card">
+                            <h2>AI Summary</h2>
+
+                            <div id="summaryContainer" class="summary-placeholder">
+                                Summary will appear here after analysis.
+                            </div>
+
+                            <h3 class="analysis-subheading">Action Items</h3>
+                            <div id="actionItems">
+                                Action items will be shown when available in the summary.
+                            </div>
+
+                        </section>
+
+                    </div>
+
+                    <!-- Professional Ask AI Chat -->
+                    <aside class="analysis-right">
+
+                        <section class="chat-section">
+
+                            <div class="chat-heading">
+                                <h2>
+                                    <span class="chat-heading-icon">💬</span>
+                                    Ask about this meeting
+                                </h2>
+                                <p>
+                                    Get answers based on the current meeting's transcript and summary.
+                                </p>
+                            </div>
+
+                            <div class="chat-card">
+                                <div
+                                    id="chatMessages"
+                                    class="chat-messages"
+                                    aria-live="polite">
+
+                                    <div class="chat-bubble assistant">
+                                        Hi! Ask me about the meeting summary, decisions, key topics, or action items.
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <form id="askForm" class="chat-composer">
+
+                                <input
+                                    id="askInput"
+                                    type="text"
+                                    placeholder="Type or speak your question..."
+                                    aria-label="Question about the meeting"
+                                    required>
+
+                                <button
+                                    type="button"
+                                    id="speakQuestion"
+                                    class="voice-button"
+                                    aria-label="Speak your question"
+                                    title="Speak your question">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        width="24"
+                                        height="24"
+                                        fill="currentColor">
+
+                                        <path d="M 12 2 C 10.343 2 9 3.343 9 5 L 9 11 C 9 12.657 10.343 14 12 14 C 13.657 14 15 12.657 15 11 L 15 5 C 15 3.343 13.657 2 12 2 z M 5 11 C 5 14.525296 7.6093644 17.433226 11 17.919922 L 11 21 L 13 21 L 13 17.919922 C 16.390636 17.433226 19 14.525296 19 11 L 17 11 C 17 13.761 14.761 16 12 16 C 9.239 16 7 13.761 7 11 L 5 11 z"/>
+                                    </svg>
+                                </button>
+
+                                <button class="chat-send" type="submit">
+                                    Ask ➤
+                                </button>
+
+                                <div class="chat-composer-tools">
+                                    <span id="voiceStatus" class="input-feedback" aria-live="polite">
+                                        Review the recognized text before sending.
+                                    </span>
+                                </div>
+
+                            </form>
+
+                        </section>
+
+                    </aside>
+
+                </div>
+            </section>
+
+        </main>
+    </div>
+        <script src="app-common.js"></script>
+
+    <script>
+        
+    document.addEventListener("DOMContentLoaded", () => {
+        "use strict";
+
+        const $ = id => document.getElementById(id);
+
+        const params = new URLSearchParams(location.search);
+        const meetingId = params.get("id");
+
+        const title = $("meetingTitle");
+        const details = $("meetingDetails");
+        const status = $("analysisStatus");
+
+        const media = $("mediaContainer");
+        const transcript = $("transcriptContainer");
+        const summary = $("summaryContainer");
+
+        const chat = $("chatMessages");
+        const form = $("askForm");
+        const input = $("askInput");
+
+        const themeToggle = $("themeToggle");
+        const themeIcon = $("themeToggleIcon");
+        const notificationButton = $("notificationButton");
+
+        let currentMeeting = null;
+
+        const safeText = (element, text) => {
+            if (element) {
+                element.textContent = text || "";
+            }
+        };
+
+        /* =================================
+           THEME TOGGLE
+        ================================= */
+
+        const THEME_KEY = "meetmind-auth-theme";
+        const OLD_THEME_KEY = "meetingAITheme";
+
+        const ICONS = {
+            moon: `
+                <svg viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round"
+                     aria-hidden="true">
+                    <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5
+                             8.5 8.5 0 1 0 20.5 14.2z"/>
+                </svg>
+            `,
+            sun: `
+                <svg viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round"
+                     aria-hidden="true">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2"/>
+                    <path d="M12 20v2"/>
+                    <path d="M4.93 4.93l1.42 1.42"/>
+                    <path d="M17.65 17.65l1.42 1.42"/>
+                    <path d="M2 12h2"/>
+                    <path d="M20 12h2"/>
+                    <path d="M4.93 19.07l1.42-1.42"/>
+                    <path d="M17.65 6.35l1.42-1.42"/>
+                </svg>
+            `
+        };
+
+        function applyTheme(isDark, savePreference = false) {
+            document.body.classList.toggle("dark-mode", isDark);
+            document.documentElement.classList.toggle("dark-mode", isDark);
+
+            document.documentElement.style.colorScheme =
+                isDark ? "dark" : "light";
+
+            if (themeIcon) {
+                themeIcon.innerHTML = isDark ? ICONS.sun : ICONS.moon;
+            }
+
+            if (themeToggle) {
+                const label = isDark
+                    ? "Switch to light mode"
+                    : "Switch to dark mode";
+
+                themeToggle.setAttribute("aria-label", label);
+                themeToggle.setAttribute("title", label);
+                themeToggle.setAttribute("aria-pressed", String(isDark));
+            }
+
+            if (savePreference) {
+                try {
+                    localStorage.setItem(
+                        THEME_KEY,
+                        isDark ? "dark" : "light"
+                    );
+
+                    localStorage.setItem(
+                        OLD_THEME_KEY,
+                        isDark ? "dark" : "light"
+                    );
+                } catch (error) {
+                    console.warn("Could not save theme preference.", error);
+                }
+            }
+        }
+
+        function readSavedTheme() {
+            try {
+                return (
+                    localStorage.getItem(THEME_KEY) ||
+                    localStorage.getItem(OLD_THEME_KEY) ||
+                    "light"
+                );
+            } catch (error) {
+                return "light";
+            }
+        }
+
+        applyTheme(readSavedTheme() === "dark", false);
+
+        themeToggle.addEventListener("click", () => {
+            const isDark =
+                !document.body.classList.contains("dark-mode");
+
+            applyTheme(isDark, true);
+        });
+
+        /* Notification button opens notification settings */
+        notificationButton.addEventListener("click", () => {
+            window.location.href = "settings.html#notifications";
+        });
+
+        /* =================================
+           CHAT FUNCTIONS
+        ================================= */
+
+        function formatQADate(value) {
+            if (!value) return "";
+
+            let timestamp = value;
+
+            // Database timestamps without a timezone are treated as UTC.
+            if (
+                typeof timestamp === "string" &&
+                !/(Z|[+-]\d{2}:\d{2})$/i.test(timestamp)
+            ) {
+                timestamp += "Z";
+            }
+
+            const date = new Date(timestamp);
+
+            if (Number.isNaN(date.getTime())) return "";
+
+            return new Intl.DateTimeFormat("en-GB", {
+                timeZone: "Asia/Kolkata",
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false
+            }).format(date);
+        }
+
+        function addBubble(text, who, timestamp = null) {
+            const div = document.createElement("div");
+
+            div.className = "chat-bubble " + who;
+            div.textContent = text;
+
+            chat.appendChild(div);
+
+            const formattedDate = formatQADate(timestamp);
+
+            if (formattedDate) {
+                const time = document.createElement("small");
+                time.className = "qa-timestamp";
+                time.textContent = formattedDate;
+                div.appendChild(time);
+            }
+
+            chat.scrollTop = chat.scrollHeight;
+
+            return div;
+        }
+
+        async function loadQuestionHistory() {
+            try {
+                const data = await api(
+                    "/api/meetings/" +
+                    encodeURIComponent(meetingId) +
+                    "/questions"
+                );
+
+                chat.replaceChildren();
+
+                if (!data.questions || data.questions.length === 0) {
+                    addBubble(
+                        "Hi! Ask me about the meeting summary, decisions, key topics, or action items.",
+                        "assistant"
+                    );
+                    return;
+                }
+
+                data.questions.forEach(item => {
+                    addBubble(item.question, "user", item.created_at);
+                    addBubble(item.answer, "assistant", item.created_at);
+                });
+
+            } catch (error) {
+                console.error("Could not load Q&A history:", error);
+            }
+        }
+
+        /* =================================
+           LOCAL MEETING DATA
+        ================================= */
+
+        function readLocalMeeting() {
+            try {
+                const meetings = JSON.parse(
+                    localStorage.getItem("meetMindMeetings") || "[]"
+                );
+
+                return meetings.find(
+                    meeting => String(meeting.id) === String(meetingId)
+                );
+            } catch (error) {
+                return null;
+            }
+        }
+
+        /* =================================
+           API REQUEST
+        ================================= */
+
+        async function api(url, options = {}) {
+            const response = await fetch(url, {
+                credentials: "same-origin",
+                ...options
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(
+                    data.detail || "Request failed (" + response.status + ")."
+                );
+            }
+
+            return data;
+        }
+
+        /* =================================
+           RENDER SUMMARY
+        ================================= */
+
+        function renderSummary(value) {
+            summary.replaceChildren();
+
+            let data = value;
+
+            // Handle summaries stored as JSON strings
+            if (typeof data === "string") {
+                try {
+                    data = JSON.parse(data);
+                } catch (error) {
+                    const p = document.createElement("p");
+                    p.textContent = data || "No summary is available.";
+                    summary.appendChild(p);
+                    return;
+                }
+            }
+
+            if (!data || typeof data !== "object") {
+                summary.textContent = "No summary is available.";
+                return;
+            }
+
+            // Meeting Overview
+            const overviewHeading = document.createElement("h3");
+            overviewHeading.textContent = "Meeting Overview";
+            summary.appendChild(overviewHeading);
+
+            const overview = document.createElement("p");
+            overview.textContent = data.overview || "No overview available.";
+            summary.appendChild(overview);
+
+            // Key Points
+            const pointsHeading = document.createElement("h3");
+            pointsHeading.textContent = "Key Points";
+            pointsHeading.className = "analysis-subheading";
+            summary.appendChild(pointsHeading);
+
+            const pointsList = document.createElement("ul");
+
+            (Array.isArray(data.key_points) ? data.key_points : [])
+                .forEach(point => {
+                    const li = document.createElement("li");
+                    li.textContent = point;
+                    pointsList.appendChild(li);
+                });
+
+            summary.appendChild(pointsList);
+
+            // Important Decisions
+            const decisionsHeading = document.createElement("h3");
+            decisionsHeading.textContent = "Important Decisions";
+            decisionsHeading.className = "analysis-subheading";
+            summary.appendChild(decisionsHeading);
+
+            const decisionsList = document.createElement("ol");
+
+            (Array.isArray(data.important_decisions)
+                ? data.important_decisions
+                : []
+            ).forEach(decision => {
+                const li = document.createElement("li");
+                li.textContent = decision;
+                decisionsList.appendChild(li);
+            });
+
+            summary.appendChild(decisionsList);
+        }
+
+        /* =================================
+           RENDER TRANSCRIPT
+        ================================= */
+
+        function renderTranscript(data) {
+            transcript.replaceChildren();
+
+            const segments = Array.isArray(data.segments)
+                ? data.segments
+                : [];
+
+            if (segments.length) {
+                segments.forEach(segment => {
+                    const line = document.createElement("div");
+                    line.className = "transcript-line";
+
+                    const start = Number(
+                        segment.start ?? segment.start_time ?? 0
+                    );
+
+                    const stamp = Number.isFinite(start)
+                        ? "[" +
+                          Math.floor(start / 60).toString().padStart(2, "0") +
+                          ":" +
+                          Math.floor(start % 60).toString().padStart(2, "0") +
+                          "] "
+                        : "";
+
+                    line.textContent =
+                        stamp + (segment.text || segment.transcript || "");
+
+                    line.title = "Click to seek to this time";
+
+                    line.addEventListener("click", () => {
+                        const player = media.querySelector("video,audio");
+
+                        if (player && Number.isFinite(start)) {
+                            player.currentTime = start;
+                        }
+                    });
+
+                    transcript.appendChild(line);
+                });
+            } else {
+                transcript.textContent =
+                    data.transcript ||
+                    "No transcript is available for this meeting.";
+            }
+        }
+
+        /* =================================
+           SHOW MEETING MEDIA
+        ================================= */
+
+        function showMedia(local, data) {
+            media.replaceChildren();
+
+            const ext = String(
+                local?.name || data.filename || ""
+            ).split(".").pop().toLowerCase();
+
+            const videoUrl =
+                "/api/meetings/" +
+                encodeURIComponent(meetingId) +
+                "/video";
+
+            if (["mp4", "webm", "mov", "mkv", "avi", "m4v"].includes(ext)) {
+                const player = document.createElement("video");
+
+                player.className = "media-player";
+                player.controls = true;
+                player.preload = "metadata";
+                player.src = videoUrl;
+
+                media.appendChild(player);
+
+            } else if (
+                ["mp3", "wav", "m4a", "ogg", "flac", "aac"].includes(ext)
+            ) {
+                const player = document.createElement("audio");
+
+                player.className = "media-player";
+                player.controls = true;
+                player.src = videoUrl;
+
+                media.appendChild(player);
+
+            } else if (ext === "pdf") {
+                const frame = document.createElement("iframe");
+
+                frame.className = "pdf-preview";
+                frame.title = "Meeting PDF";
+                frame.src = videoUrl;
+
+                media.appendChild(frame);
+
+            } else if (local?.url) {
+                const link = document.createElement("a");
+
+                link.href = local.url;
+                link.target = "_blank";
+                link.rel = "noopener noreferrer";
+                link.textContent = "Open original meeting URL";
+
+                media.appendChild(link);
+
+            } else {
+                const note = document.createElement("p");
+
+                note.textContent =
+                    "The original file was processed successfully. Preview is not available for this file type.";
+
+                media.appendChild(note);
+            }
+        }
+function formatDuration(totalSeconds) {
+    const seconds = Math.floor(Number(totalSeconds));
+
+    if (!Number.isFinite(seconds) || seconds < 0) {
+        return "";
+    }
+
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+
+    if (hours > 0) {
+        return `${hours}:${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+    }
+
+    return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
+}
+        
+/* =================================
+   LOAD MEETING
+================================= */
+
+async function load() {
+    if (!meetingId) {
+        safeText(title, "No Meeting Selected");
+
+        safeText(
+            status,
+            "Open a meeting from Meetings or View History."
+        );
+
+        return;
+    }
+
+    const local = readLocalMeeting();
+
+    try {
+        currentMeeting = await api(
+            "/api/meetings/" + encodeURIComponent(meetingId)
+        );
+
+        safeText(
+            title,
+            currentMeeting.filename ||
+            local?.name ||
+            "Meeting Analysis"
+        );
+
+        safeText(
+            details,
+            "Meeting ID: " + meetingId +
+            (
+                currentMeeting.duration
+                    ? " · Duration: " + formatDuration(currentMeeting.duration)
+                    : ""
+            )
+        );
+
+        safeText(status, "Meeting loaded successfully.");
+
+        // Load meeting content
+        renderTranscript(currentMeeting);
+        renderSummary(currentMeeting.summary);
+        showMedia(local, currentMeeting);
+        
+        await loadQuestionHistory();
+
+        // Parse summary data
+        let summaryData = currentMeeting.summary;
+
+        if (typeof summaryData === "string") {
+            try {
+                summaryData = JSON.parse(summaryData);
+            } catch (error) {
+                summaryData = null;
+            }
+        }
+
+        // Display Action Items
+        const actionItemsContainer = $("actionItems");
+        actionItemsContainer.replaceChildren();
+
+        const actionItems = Array.isArray(summaryData?.action_items)
+            ? summaryData.action_items
+            : [];
+
+        if (actionItems.length > 0) {
+            const table = document.createElement("table");
+            table.className = "analysis-table";
+
+            const thead = document.createElement("thead");
+            thead.innerHTML = `
+                <tr>
+                    <th>Task</th>
+                    <th>Owner</th>
+                    <th>Deadline</th>
+                </tr>
+            `;
+            table.appendChild(thead);
+
+            const tbody = document.createElement("tbody");
+
+            actionItems.forEach(item => {
+                const tr = document.createElement("tr");
+
+                [item.task, item.owner, item.deadline].forEach(value => {
+                    const td = document.createElement("td");
+                    td.textContent = value || "Not specified";
+                    tr.appendChild(td);
+                });
+
+                tbody.appendChild(tr);
+            });
+
+            table.appendChild(tbody);
+            actionItemsContainer.appendChild(table);
+        } else {
+            actionItemsContainer.textContent = "No action items available.";
+        }
+
+    } catch (error) {
+        safeText(
+            status,
+            error.message +
+            " If you are not logged in, please sign in and try again."
+        );
+
+        if (local?.transcript) {
+            renderTranscript(local);
+            renderSummary(local.summary);
+        }
+
+        if (local?.url) {
+            showMedia(local, {});
+        }
+    }
+}
+
+
+        /* =================================
+           ASK AI
+        ================================= */
+
+        form.addEventListener("submit", async event => {
+            event.preventDefault();
+
+            const question = input.value.trim();
+
+            if (!question || !meetingId) {
+                return;
+            }
+
+            const userBubble = addBubble(question, "user");
+            input.value = "";
+
+            const pending = addBubble("Thinking…", "assistant");
+
+            try {
+                const answer = await api(
+                    "/api/meetings/" +
+                    encodeURIComponent(meetingId) +
+                    "/ask",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ question })
+                    }
+                );
+
+                pending.textContent =
+                    answer.answer || "The AI returned no answer.";
+
+                const timestamp = formatQADate(answer.created_at);
+
+                if (timestamp) {
+                    [userBubble, pending].forEach(bubble => {
+                        const time = document.createElement("small");
+                        time.className = "qa-timestamp";
+                        time.textContent = timestamp;
+                        bubble.appendChild(time);
+                    });
+                }
+
+                chat.scrollTop = chat.scrollHeight;
+
+            } catch (error) {
+                pending.textContent = error.message;
+            }
+        });
+
+        /* =================================
+           VOICE INPUT
+        ================================= */
+
+        const SpeechRecognition =
+            window.SpeechRecognition ||
+            window.webkitSpeechRecognition;
+
+        $("speakQuestion").addEventListener("click", () => {
+            if (!SpeechRecognition) {
+                safeText(
+                    $("voiceStatus"),
+                    "Speech recognition is not supported in this browser. Try a recent version of Chrome."
+                );
+
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+
+            recognition.lang = navigator.language || "en-US";
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            safeText(
+                $("voiceStatus"),
+                "Listening… speak your question."
+            );
+
+            recognition.onresult = event => {
+                input.value = event.results[0][0].transcript;
+                input.focus();
+
+                safeText(
+                    $("voiceStatus"),
+                    "Review your question, then press Ask."
+                );
+            };
+
+            recognition.onerror = event => {
+                safeText(
+                    $("voiceStatus"),
+                    "Microphone error: " +
+                    event.error +
+                    ". Check browser microphone permission."
+                );
+            };
+
+            try {
+                recognition.start();
+            } catch (error) {
+                safeText(
+                    $("voiceStatus"),
+                    "Could not start speech recognition. Please try again."
+                );
+            }
+        });
+
+        /* =================================
+           DOWNLOAD TRANSCRIPT
+        ================================= */
+
+        $("downloadTranscript")?.addEventListener("click", () => {
+            const text = transcript.innerText || "";
+
+            const blob = new Blob(
+                [text],
+                { type: "text/plain;charset=utf-8" }
+            );
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+
+            link.href = url;
+            link.download =
+                (title.textContent || "meeting") + "_transcript.txt";
+
+            link.click();
+
+            URL.revokeObjectURL(url);
+        });
+
+        /* =================================
+           SAVE MEETING NOTES
+        ================================= */
+
+        $("saveNotes")?.addEventListener("click", () => {
+            if (!meetingId) {
+                return;
+            }
+
+            localStorage.setItem(
+                "meetmind-notes-" + meetingId,
+                $("meetingNotes").value
+            );
+
+            safeText(
+                $("notesStatus"),
+                "Notes saved in this browser."
+            );
+        });
+
+        /* =================================
+           BOOKMARK CURRENT MOMENT
+        ================================= */
+
+        $("bookmarkMoment")?.addEventListener("click", () => {
+            const player = media.querySelector("video,audio");
+
+            const seconds = player
+                ? Math.floor(player.currentTime)
+                : null;
+
+            const key = "meetmind-bookmarks-" + meetingId;
+
+            const list = JSON.parse(
+                localStorage.getItem(key) || "[]"
+            );
+
+            list.push({
+                seconds,
+                createdAt: new Date().toISOString()
+            });
+
+            localStorage.setItem(key, JSON.stringify(list));
+
+            safeText(
+                $("notesStatus"),
+                seconds === null
+                    ? "Bookmark saved (no media timestamp available)."
+                    : "Bookmark saved at " +
+                      Math.floor(seconds / 60) +
+                      ":" +
+                      String(seconds % 60).padStart(2, "0") +
+                      "."
+            );
+        });
+
+        /* =================================
+           EXPORT PDF
+        ================================= */
+
+        $("exportPdf")?.addEventListener("click", () => {
+            if (!meetingId) {
+                return;
+            }
+
+            const link = document.createElement("a");
+
+            link.href =
+                "/api/meetings/" +
+                encodeURIComponent(meetingId) +
+                "/report/pdf";
+
+            link.target = "_blank";
+            link.rel = "noopener";
+
+            link.click();
+        });
+
+        /* Load meeting data */
+        load();
+    });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,453 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" type="image/png" href="/static/meetmind-logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f5ff">
+    <meta name="description" content="Manage and analyze your meetings with MEETMIND AI.">
+
+    <title>Dashboard | MEETMIND AI</title>
+
+    <link rel="stylesheet" href="/static/dashboard.css">
+    <link rel="stylesheet" href="/static/pages.css">
+
+    <style>
+        .nav-icon,
+        .topbar-icon,
+        .search-icon,
+        .profile-chevron {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .nav-icon svg,
+        .topbar-icon svg,
+        .search-icon svg,
+        .profile-chevron svg {
+            width: 20px;
+            height: 20px;
+            display: block;
+        }
+
+        .nav-icon {
+            width: 22px;
+            height: 22px;
+        }
+
+        .sidebar-bottom .nav-link[href="/static/settings.html"] .nav-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+            stroke: none;
+        }
+
+        .dashboard-theme-toggle {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 1px solid #dfe3ef;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #34354a;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease,
+                border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .dashboard-theme-toggle:hover {
+            border-color: #5935f5;
+            transform: translateY(-1px);
+        }
+
+        .dashboard-theme-toggle:focus-visible,
+        .notification-button:focus-visible {
+            outline: 3px solid #bcb0ff;
+            outline-offset: 3px;
+        }
+
+        .dashboard-theme-toggle svg {
+            width: 21px;
+            height: 21px;
+            display: block;
+        }
+
+        body.dark-mode .dashboard-theme-toggle {
+            background: #24253c;
+            color: #f1f1fc;
+            border-color: #444661;
+        }
+
+        .notification-button {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-button .topbar-icon svg {
+            width: 21px;
+            height: 21px;
+        }
+
+        .notification-button .notification {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-theme-toggle {
+                width: 36px;
+                height: 36px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <a href="/home" class="brand">
+            <h2>MEETMIND <span>AI</span></h2>
+            <p>AI Meeting Intelligence System</p>
+        </a>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+
+            <a href="/home" class="nav-link active" aria-current="page">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="4" width="6" height="6" rx="1"/>
+                        <rect x="14" y="4" width="6" height="6" rx="1"/>
+                        <rect x="4" y="14" width="6" height="6" rx="1"/>
+                        <rect x="14" y="14" width="6" height="6" rx="1"/>
+                    </svg>
+                </span>
+                Home
+            </a>
+
+            <a href="/static/meetings.html" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="5" width="13" height="14" rx="2"/>
+                        <path d="m16 10 5-3v10l-5-3z"/>
+                    </svg>
+                </span>
+                Meetings
+            </a>
+
+            <a href="/static/history.html" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/>
+                        <path d="M3 3v5h5"/>
+                        <path d="M12 7v5l3 2"/>
+                    </svg>
+                </span>
+                View History
+            </a>
+
+            <a href="/static/about.html" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="M12 11v5"/>
+                        <path d="M12 7h.01"/>
+                    </svg>
+                </span>
+             About
+        </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a href="/static/settings.html" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="22" height="22"
+                         viewBox="0 0 50 50"
+                         fill="currentColor"
+                         aria-hidden="true">
+                        <path d="M 22.19 2 A 1.00 1.00 0 0 0 21.21 2.83 L 20.20 8.79 C 19.01 9.14 17.90 9.60 16.83 10.17 L 11.87 6.68 A 1.00 1.00 0 0 0 10.59 6.79 L 6.69 10.69 A 1.00 1.00 0 0 0 6.58 11.97 L 10.07 16.93 C 9.50 17.98 9.04 19.10 8.69 20.29 L 2.84 21.21 A 1.00 1.00 0 0 0 2 22.19 L 2 27.69 A 1.00 1.00 0 0 0 2.83 28.68 L 8.79 29.69 C 9.14 30.88 9.60 31.99 10.16 33.05 L 6.68 37.91 A 1.00 1.00 0 0 0 6.79 39.20 L 10.69 43.10 A 1.00 1.00 0 0 0 11.97 43.21 L 16.93 39.72 C 17.98 40.29 19.11 40.75 20.30 41.10 L 21.31 47.06 A 1.00 1.00 0 0 0 22.30 47.90 L 27.80 47.90 A 1.00 1.00 0 0 0 28.78 47.08 L 29.88 41.10 C 31.07 40.75 32.19 40.29 33.26 39.72 L 38.22 43.21 A 1.00 1.00 0 0 0 39.50 43.10 L 43.40 39.20 A 1.00 1.00 0 0 0 43.50 37.91 L 39.93 32.95 C 40.50 31.91 40.95 30.82 41.30 29.69 L 47.16 28.68 A 1.00 1.00 0 0 0 48 27.69 L 48 22.19 A 1.00 1.00 0 0 0 47.16 21.21 L 41.19 20.20 C 40.85 19.07 40.39 17.97 39.82 16.93 L 43.31 11.97 A 1.00 1.00 0 0 0 43.20 10.69 L 39.30 6.79 A 1.00 1.00 0 0 0 38.01 6.68 L 33.05 10.27 C 32.00 9.70 30.88 9.24 29.69 8.89 L 28.68 2.83 A 1.00 1.00 0 0 0 27.69 2 L 22.19 2 z M 23.04 4 L 26.85 4 L 27.81 9.76 A 1.00 1.00 0 0 0 28.55 10.57 C 30.07 10.94 31.47 11.51 32.67 12.25 A 1.00 1.00 0 0 0 33.78 12.21 L 38.49 8.80 L 41.19 11.51 L 37.88 16.22 A 1.00 1.00 0 0 0 37.84 17.32 C 38.58 18.52 39.15 19.93 39.53 21.35 A 1.00 1.00 0 0 0 40.33 22.08 L 46 23.04 L 46 26.85 L 40.42 27.81 A 1.00 1.00 0 0 0 39.63 28.54 C 39.25 29.96 38.68 31.37 37.94 32.57 A 1.00 1.00 0 0 0 37.99 33.68 L 41.39 38.39 L 38.68 41.09 L 33.97 37.78 A 1.00 1.00 0 0 0 32.90 37.73 C 31.56 38.49 30.26 39.05 28.75 39.42 A 1.00 1.00 0 0 0 28.01 40.21 L 26.96 45.90 L 23.14 45.90 L 22.18 40.23 A 1.00 1.00 0 0 0 21.44 39.42 C 19.92 39.05 18.52 38.48 17.32 37.74 A 1.00 1.00 0 0 0 16.22 37.78 L 11.51 41.09 L 8.80 38.39 L 12.11 33.78 A 1.00 1.00 0 0 0 12.16 32.70 C 11.40 31.36 10.84 30.06 10.47 28.55 A 1.00 1.00 0 0 0 9.66 27.81 L 4 26.85 L 4 23.05 L 9.55 22.18 A 1.00 1.00 0 0 0 10.37 21.44 C 10.74 19.92 11.31 18.52 12.05 17.32 A 1.00 1.00 0 0 0 12.01 16.22 L 8.70 11.51 L 11.41 8.80 L 16.12 12.11 A 1.00 1.00 0 0 0 17.19 12.16 C 18.53 11.40 19.83 10.84 21.34 10.47 A 1.00 1.00 0 0 0 22.08 9.66 L 23.04 4 z M 25 17 C 20.57 17 17 20.57 17 25 C 17 29.42 20.57 33 25 33 C 29.42 33 33 29.42 33 25 C 33 20.57 29.42 17 25 17 z M 25 19 C 28.37 19 31 21.62 31 25 C 31 28.37 28.37 31 25 31 C 21.62 31 19 28.37 19 25 z"/>
+                    </svg>
+                </span>
+                Settings
+            </a>
+
+            <a href="/" class="nav-link" id="logoutLink">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 17l5-5-5-5"/>
+                        <path d="M15 12H3"/>
+                        <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/>
+                    </svg>
+                </span>
+                Logout
+            </a>
+
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-area">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <div>
+            </div>
+
+            <div class="topbar-actions">
+
+                <button type="button" id="themeToggle"
+                        class="dashboard-theme-toggle"
+                        aria-label="Switch to dark mode"
+                        aria-pressed="false"
+                        title="Switch to dark mode">
+                    <span id="themeToggleIcon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2z"/>
+                        </svg>
+                    </span>
+                </button>
+
+                <button type="button" id="notificationButton"
+                        class="notification-button"
+                        aria-label="Notifications"
+                        title="Notifications">
+                    <span class="topbar-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                            <path d="M10 21h4"/>
+                        </svg>
+                    </span>
+                    <span class="notification"></span>
+                </button>
+
+                <button type="button" id="profileButton"
+                        class="profile-button"
+                        aria-label="My Workspace">
+                    <span class="avatar">S</span>
+                    <span>My Workspace</span>
+                    <span class="profile-chevron" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6"/>
+                        </svg>
+                    </span>
+                </button>
+
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <section class="page-content">
+
+            <!-- HERO SECTION -->
+            <section class="hero">
+
+                <div class="hero-copy">
+                    <p class="eyebrow">WELCOME TO</p>
+                    <h1>MEETMIND <span>AI</span></h1>
+                    <h2>AI Meeting Intelligence System</h2>
+                    <p class="hero-description">
+                        Upload your meeting files or paste a meeting URL
+                        to organize your meeting analysis in one place.
+                    </p>
+                </div>
+
+                <div class="hero-visual" aria-hidden="true">
+
+                    <div class="floating-label label-summary">
+                        ▤ &nbsp; Summaries
+                    </div>
+
+                    <div class="floating-label label-transcript">
+                        ▥ &nbsp; Transcripts
+                    </div>
+
+                    <div class="visual-window">
+                        <div class="play-icon">▶</div>
+
+                        <div class="visual-lines">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+
+                        <div class="waveform">
+                            <i></i><i></i><i></i><i></i>
+                            <i></i><i></i><i></i><i></i>
+                        </div>
+                    </div>
+
+                    <div class="floating-label label-actions">
+                        ✓ &nbsp; Action Items
+                    </div>
+
+                    <div class="floating-label label-insights">
+                        ▥ &nbsp; Insights
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- MEETING INPUTS -->
+            <section class="analysis-panel">
+
+                <div class="input-columns">
+
+                    <div class="input-card">
+
+                        <div class="input-heading">
+                            <div class="round-icon upload-icon" aria-hidden="true">
+                                ☁
+                            </div>
+
+                            <div>
+                                <h3>Upload Meeting File</h3>
+                                <p>Choose a video, audio, PDF, or document file.</p>
+                            </div>
+                        </div>
+
+                        <input type="file" id="meetingFile"
+                               accept=".mp4,.webm,.ogg,.mov,.avi,.mp3,.wav,.m4a,.pdf,.doc,.docx,.jpg,.jpeg,.png"
+                               hidden>
+
+                        <button type="button" id="filePicker"
+                                class="choose-file-button">
+                            <span aria-hidden="true">↥</span>
+                            Choose File
+                        </button>
+
+                        <p class="file-support">
+                            Supports video, audio, PDF, DOC/DOCX, and image files.
+                            <div id="selectedFilePreview" class="selected-file-preview" hidden>
+                                <div id="selectedFileIcon" class="selected-file-icon"></div>
+
+                                <div class="selected-file-details">
+                                    <h4 id="selectedFileName"></h4>
+                                    <p id="selectedFileMeta"></p>
+                                </div>
+
+                                <span id="selectedFileType" class="selected-file-type"></span>
+                            </div>
+                        </p>
+
+                        <p id="fileInfo" class="input-feedback"
+                           aria-live="polite"></p>
+
+                    </div>
+
+                    <div class="or-divider">
+                        <span>OR</span>
+                    </div>
+
+                    <div class="input-card">
+
+                        <div class="input-heading">
+                            <div class="round-icon url-icon" aria-hidden="true">
+                                ↗
+                            </div>
+
+                            <div>
+                                <h3>Meeting URL</h3>
+                                <p>Paste a meeting link from YouTube, Google Meet, Zoom, or Teams.</p>
+                            </div>
+                        </div>
+
+                        <div class="url-input">
+                            <span aria-hidden="true">↗</span>
+                            <input type="url" id="meetingUrl"
+                                   placeholder="Enter meeting URL (https://...)"
+                                   aria-label="Meeting URL">
+                        </div>
+
+                        <p id="urlInfo" class="input-feedback"
+                           aria-live="polite"></p>
+
+                    </div>
+                </div>
+
+                <!-- ANALYZE BUTTON -->
+                <div class="analyze-area">
+                    <button type="button" id="analyzeButton"
+                            class="analyze-button">
+                        <span aria-hidden="true">✦</span>
+                        Analyze Meeting
+                        <span aria-hidden="true">→</span>
+                    </button>
+
+                    <p id="analysisMessage" class="input-feedback"
+                       aria-live="polite"></p>
+                </div>
+            </section>
+
+            <!-- RECENT MEETINGS -->
+            <section class="recent-panel">
+
+                <div class="section-heading">
+                    <h2>
+                            <svg class="recent-meetings-icon"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 100 100"
+                                fill="currentColor"
+                                aria-hidden="true">
+
+                                <path d="M28.1,48C28,48.7,28,49.3,28,50h-6c0-0.7,0-1.3,0.1-2H28.1z"/>
+                                <path d="M51.5,36h-3c-0.8,0-1.5,0.7-1.5,1.5v13.1c0,0.4,0.2,0.8,0.4,1.1l8.4,8.4c0.6,0.6,1.5,0.6,2.1,0l2.1-2.1c0.6-0.6,0.6-1.5,0-2.1L53,48.8V37.5C53,36.7,52.3,36,51.5,36z"/>
+                                <path d="M50,22c-14.8,0-26.9,11.5-27.9,26c0,0.3-0.1,0.7-0.1,1h-4.5c-1.3,0-2,1.5-1.2,2.4l7.5,9.1c0.6,0.7,1.7,0.7,2.3,0l7.5-9.1c0.8-1,0.1-2.4-1.2-2.4H28c0-0.3,0-0.7,0-1c1-11.2,10.5-20,21.9-20c13,0,23.3,11.3,21.9,24.5C70.8,62,61.8,71,52.2,71.9c-7.1,0.7-13.8-1.9-18.5-7c-0.6-0.7-1.4-1.1-2.2-0.1l-2.4,2.9c-0.5,0.6-0.1,1,0.4,1.5c5.4,5.7,12.8,8.9,20.8,8.8c14.4-0.2,26.5-11.6,27.5-26C79.1,35.7,66.1,22,50,22z"/>
+                        </svg>
+                        Recent Meetings
+                    </h2>
+
+                    <a href="/static/history.html" class="view-all-button">
+                        View History →
+                    </a>
+                </div>
+
+                <div class="meeting-list" id="meetingList"></div>
+
+                <p id="emptyRecent" class="empty-state">
+                    Your saved meetings will appear here.
+                </p>
+
+            </section>
+
+        </section>
+    </main>
+</div>
+
+<script src="/static/app-common.js"></script>
+<script src="/static/dashboard.js"></script>
+
+</body>
+</html>

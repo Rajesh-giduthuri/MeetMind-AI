@@ -1,0 +1,1050 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="/static/meetmind-logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f8ff">
+    <title>About & Help | MEETMIND AI</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="pages.css">
+
+    <style>
+        /* =========================================
+           ABOUT PAGE
+        ========================================= */
+
+        .about-page {
+            max-width: 1250px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 30px;
+            box-sizing: border-box;
+            color: var(--text, #17182b);
+        }
+
+        .about-eyebrow {
+            color: #5935f5;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            margin: 0 0 10px;
+        }
+
+        .about-heading {
+            margin: 0 0 10px;
+            font-size: 32px;
+            line-height: 1.25;
+            font-weight: 800;
+        }
+
+        .about-intro {
+            max-width: 760px;
+            color: var(--muted, #6e748d);
+            font-size: 15px;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        /* Hero section */
+        .about-hero {
+            position: relative;
+            overflow: hidden;
+            padding: 38px;
+            border: 1px solid #e2defe;
+            border-radius: 20px;
+            background: linear-gradient(120deg, #ffffff 0%, #f2efff 100%);
+            margin-bottom: 28px;
+        }
+
+        .about-hero-content {
+            max-width: 760px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .about-brand {
+            font-size: 38px;
+            font-weight: 900;
+            letter-spacing: -1.8px;
+            margin: 0 0 12px;
+            color: #17182b;
+        }
+
+        .about-brand span {
+            color: #5935f5;
+        }
+
+        .about-hero-description {
+            font-size: 16px;
+            line-height: 1.9;
+            color: #59617c;
+            margin: 0 0 22px;
+        }
+
+        .about-hero-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 19px;
+            border-radius: 10px;
+            background: #5935f5;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .about-hero-button:hover {
+            background: #4523dc;
+            transform: translateY(-1px);
+        }
+
+        /* Section layout */
+        .about-section {
+            margin-top: 34px;
+        }
+
+        .about-section-header {
+            margin-bottom: 19px;
+        }
+
+        .about-section-header h2 {
+            font-size: 23px;
+            margin: 0 0 7px;
+            font-weight: 800;
+        }
+
+        .about-section-header p {
+            color: var(--muted, #6e748d);
+            font-size: 14px;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        /* Feature cards */
+        .about-feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .about-card {
+            min-width: 0;
+            padding: 23px;
+            background: #ffffff;
+            border: 1px solid #e0e4f1;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(30, 35, 75, 0.035);
+        }
+
+        .about-card-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            border-radius: 13px;
+            background: #f0edff;
+            color: #5935f5;
+            margin-bottom: 17px;
+        }
+
+        .about-card-icon svg {
+            width: 23px;
+            height: 23px;
+        }
+
+        .about-card h3 {
+            margin: 0 0 9px;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .about-card p {
+            color: var(--muted, #6e748d);
+            font-size: 14px;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        /* How to use */
+        .help-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .help-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 22px;
+            border: 1px solid #e0e4f1;
+            border-radius: 14px;
+            background: #ffffff;
+            min-width: 0;
+        }
+
+        .help-step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 38px;
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: #f0edff;
+            color: #5935f5;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .help-step h3 {
+            margin: 2px 0 7px;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .help-step p {
+            margin: 0;
+            color: var(--muted, #6e748d);
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        /* Tips */
+        .about-tips {
+            padding: 24px;
+            border-radius: 15px;
+            border: 1px solid #e0e4f1;
+            background: #ffffff;
+        }
+
+        .about-tips h3 {
+            margin: 0 0 14px;
+            font-size: 17px;
+        }
+
+        .about-tips ul {
+            margin: 0;
+            padding-left: 21px;
+        }
+
+        .about-tips li {
+            margin: 10px 0;
+            color: var(--muted, #6e748d);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        /* FAQ */
+        .faq-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .faq-item {
+            border: 1px solid #e0e4f1;
+            border-radius: 12px;
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 18px 20px;
+            border: none;
+            background: transparent;
+            color: var(--text, #17182b);
+            text-align: left;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .faq-question:hover {
+            background: #faf9ff;
+        }
+
+        .faq-chevron {
+            flex-shrink: 0;
+            color: #5935f5;
+            transition: transform 0.2s ease;
+        }
+
+        .faq-item.open .faq-chevron {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            display: none;
+            padding: 0 20px 18px;
+            color: var(--muted, #6e748d);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .faq-item.open .faq-answer {
+            display: block;
+        }
+
+        /* Footer */
+        .about-footer {
+            margin-top: 36px;
+            padding: 24px 0 10px;
+            border-top: 1px solid #e0e4f1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .about-footer p {
+            margin: 0;
+            color: var(--muted, #6e748d);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .about-footer a {
+            color: #5935f5;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .about-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================================
+           TOPBAR
+        ========================================= */
+
+        .app-layout > .main-area > .topbar {
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .about-topbar-title {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* =========================================
+           DARK MODE
+        ========================================= */
+
+        body.dark-mode .about-page {
+            color: #f1f3ff;
+        }
+
+        body.dark-mode .about-hero {
+            background: linear-gradient(120deg, #222638, #292344);
+            border-color: #403b62;
+        }
+
+        body.dark-mode .about-brand {
+            color: #f1f3ff;
+        }
+
+        body.dark-mode .about-hero-description {
+            color: #c3c9dc;
+        }
+
+        body.dark-mode .about-card,
+        body.dark-mode .help-step,
+        body.dark-mode .about-tips,
+        body.dark-mode .faq-item {
+            background: #222638;
+            border-color: #3b4258;
+        }
+
+        body.dark-mode .about-card h3,
+        body.dark-mode .help-step h3,
+        body.dark-mode .about-tips h3,
+        body.dark-mode .faq-question {
+            color: #f1f3ff;
+        }
+
+        body.dark-mode .about-card p,
+        body.dark-mode .help-step p,
+        body.dark-mode .about-tips li,
+        body.dark-mode .faq-answer,
+        body.dark-mode .about-footer p {
+            color: #b7bfd4;
+        }
+
+        body.dark-mode .faq-question:hover {
+            background: #292f43;
+        }
+
+        body.dark-mode .about-footer {
+            border-color: #3b4258;
+        }
+
+        body.dark-mode .about-card-icon,
+        body.dark-mode .help-step-number {
+            background: #332b59;
+            color: #c6baff;
+        }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @media (max-width: 1000px) {
+            .about-feature-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 680px) {
+            .about-page {
+                padding: 22px 15px;
+            }
+
+            .about-hero {
+                padding: 25px 21px;
+            }
+
+            .about-brand {
+                font-size: 31px;
+            }
+
+            .about-heading {
+                font-size: 27px;
+            }
+
+            .about-feature-grid,
+            .help-list {
+                grid-template-columns: 1fr;
+            }
+
+            .about-card,
+            .help-step {
+                padding: 19px;
+            }
+
+            .about-footer {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <a href="/home" class="brand">
+            <h2>MEETMIND <span>AI</span></h2>
+            <p>AI Meeting Intelligence System</p>
+        </a>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <a href="/home" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8">
+                        <rect x="4" y="4" width="6" height="6" rx="1"/>
+                        <rect x="14" y="4" width="6" height="6" rx="1"/>
+                        <rect x="4" y="14" width="6" height="6" rx="1"/>
+                        <rect x="14" y="14" width="6" height="6" rx="1"/>
+                    </svg>
+                </span>
+                Home
+            </a>
+
+            <a href="/static/meetings.html" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="5" width="13" height="14" rx="2"/>
+                        <path d="m16 10 5-3v10l-5-3z"/>
+                    </svg>
+                </span>
+                Meetings
+            </a>
+
+            <a href="/static/history.html" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/>
+                        <path d="M3 3v5h5"/>
+                        <path d="M12 7v5l3 2"/>
+                    </svg>
+                </span>
+                View History
+            </a>
+
+            <a href="/static/about.html" class="nav-link active" aria-current="page">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="M12 11v5"/>
+                        <path d="M12 7h.01"/>
+                    </svg>
+                </span>
+                About
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="settings.html" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="22" height="22"
+                         viewBox="0 0 50 50"
+                         fill="currentColor"
+                         aria-hidden="true">
+                        <path d="M 22.19 2 A 1.00 1.00 0 0 0 21.21 2.83 L 20.20 8.79 C 19.01 9.14 17.90 9.60 16.83 10.17 L 11.87 6.68 A 1.00 1.00 0 0 0 10.59 6.79 L 6.69 10.69 A 1.00 1.00 0 0 0 6.58 11.97 L 10.07 16.93 C 9.50 17.98 9.04 19.10 8.69 20.29 L 2.84 21.21 A 1.00 1.00 0 0 0 2 22.19 L 2 27.69 A 1.00 1.00 0 0 0 2.83 28.68 L 8.79 29.69 C 9.14 30.88 9.60 31.99 10.16 33.05 L 6.68 37.91 A 1.00 1.00 0 0 0 6.79 39.20 L 10.69 43.10 A 1.00 1.00 0 0 0 11.97 43.21 L 16.93 39.72 C 17.98 40.29 19.11 40.75 20.30 41.10 L 21.31 47.06 A 1.00 1.00 0 0 0 22.30 47.90 L 27.80 47.90 A 1.00 1.00 0 0 0 28.78 47.08 L 29.88 41.10 C 31.07 40.75 32.19 40.29 33.26 39.72 L 38.22 43.21 A 1.00 1.00 0 0 0 39.50 43.10 L 43.40 39.20 A 1.00 1.00 0 0 0 43.50 37.91 L 39.93 32.95 C 40.50 31.91 40.95 30.82 41.30 29.69 L 47.16 28.68 A 1.00 1.00 0 0 0 48 27.69 L 48 22.19 A 1.00 1.00 0 0 0 47.16 21.21 L 41.19 20.20 C 40.85 19.07 40.39 17.97 39.82 16.93 L 43.31 11.97 A 1.00 1.00 0 0 0 43.20 10.69 L 39.30 6.79 A 1.00 1.00 0 0 0 38.01 6.68 L 33.05 10.27 C 32.00 9.70 30.88 9.24 29.69 8.89 L 28.68 2.83 A 1.00 1.00 0 0 0 27.69 2 L 22.19 2 z M 23.04 4 L 26.85 4 L 27.81 9.76 A 1.00 1.00 0 0 0 28.55 10.57 C 30.07 10.94 31.47 11.51 32.67 12.25 A 1.00 1.00 0 0 0 33.78 12.21 L 38.49 8.80 L 41.19 11.51 L 37.88 16.22 A 1.00 1.00 0 0 0 37.84 17.32 C 38.58 18.52 39.15 19.93 39.53 21.35 A 1.00 1.00 0 0 0 40.33 22.08 L 46 23.04 L 46 26.85 L 40.42 27.81 A 1.00 1.00 0 0 0 39.63 28.54 C 39.25 29.96 38.68 31.37 37.94 32.57 A 1.00 1.00 0 0 0 37.99 33.68 L 41.39 38.39 L 38.68 41.09 L 33.97 37.78 A 1.00 1.00 0 0 0 32.90 37.73 C 31.56 38.49 30.26 39.05 28.75 39.42 A 1.00 1.00 0 0 0 28.01 40.21 L 26.96 45.90 L 23.14 45.90 L 22.18 40.23 A 1.00 1.00 0 0 0 21.44 39.42 C 19.92 39.05 18.52 38.48 17.32 37.74 A 1.00 1.00 0 0 0 16.22 37.78 L 11.51 41.09 L 8.80 38.39 L 12.11 33.78 A 1.00 1.00 0 0 0 12.16 32.70 C 11.40 31.36 10.84 30.06 10.47 28.55 A 1.00 1.00 0 0 0 9.66 27.81 L 4 26.85 L 4 23.05 L 9.55 22.18 A 1.00 1.00 0 0 0 10.37 21.44 C 10.74 19.92 11.31 18.52 12.05 17.32 A 1.00 1.00 0 0 0 12.01 16.22 L 8.70 11.51 L 11.41 8.80 L 16.12 12.11 A 1.00 1.00 0 0 0 17.19 12.16 C 18.53 11.40 19.83 10.84 21.34 10.47 A 1.00 1.00 0 0 0 22.08 9.66 L 23.04 4 z M 25 17 C 20.57 17 17 20.57 17 25 C 17 29.42 20.57 33 25 33 C 29.42 33 33 29.42 33 25 C 33 20.57 29.42 17 25 17 z M 25 19 C 28.37 19 31 21.62 31 25 C 31 28.37 28.37 31 25 31 C 21.62 31 19 28.37 19 25 z"/>
+                    </svg>
+                </span>
+                Settings
+            </a>
+
+            <a href="/" class="nav-link" id="logoutLink">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 17l5-5-5-5"/>
+                        <path d="M15 12H3"/>
+                        <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/>
+                    </svg>
+                </span>
+                Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <main class="main-area">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <h3 class="about-topbar-title"></h3>
+
+            <div class="topbar-actions">
+                <button type="button"
+                        id="themeToggle"
+                        class="dashboard-theme-toggle"
+                        aria-label="Switch theme"
+                        title="Switch theme">
+                    <span id="themeToggleIcon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2z"/>
+                        </svg>
+                    </span>
+                </button>
+
+                <button type="button"
+                        id="notificationButton"
+                        class="notification-button"
+                        aria-label="Notifications"
+                        title="Notifications">
+                    <span aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                            <path d="M10 21h4"/>
+                        </svg>
+                    </span>
+                </button>
+
+                <a href="settings.html" class="profile-button" id="profileButton">
+                    <span class="avatar" id="headerAvatar">S</span>
+                    <span id="headerProfileName">My Workspace</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <div class="about-page">
+
+            <!-- INTRODUCTION -->
+            <section class="about-hero">
+                <div class="about-hero-content">
+                    <p class="about-eyebrow">ABOUT OUR PLATFORM</p>
+
+                    <h1 class="about-brand">
+                        MEETMIND <span>AI</span>
+                    </h1>
+
+                    <p class="about-hero-description">
+                        MEETMIND AI is a meeting intelligence platform designed
+                        to help users organize meeting content and review
+                        important information in one convenient workspace.
+                        The interface brings meeting uploads, meeting links,
+                        analysis results, transcripts, summaries, and saved
+                        meeting records together in a structured experience.
+                    </p>
+
+                    <a href="home/" class="about-hero-button">
+                        Go to Home &rarr;
+                    </a>
+                </div>
+            </section>
+
+            <!-- ABOUT THE WEBSITE -->
+            <section class="about-section">
+                <div class="about-section-header">
+                    <h2>What is MEETMIND AI?</h2>
+                    <p>
+                        A centralized workspace for managing and reviewing
+                        meeting information.
+                    </p>
+                </div>
+
+                <div class="about-feature-grid">
+
+                    <article class="about-card">
+                        <div class="about-card-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 3v12"/>
+                                <path d="m7 10 5 5 5-5"/>
+                                <path d="M5 17v3h14v-3"/>
+                            </svg>
+                        </div>
+                        <h3>Meeting Input</h3>
+                        <p>
+                            Use the dashboard to select a supported meeting
+                            file or enter a meeting URL where that input type
+                            is supported by your application.
+                        </p>
+                    </article>
+
+                    <article class="about-card">
+                        <div class="about-card-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 5h16v11H8l-4 3z"/>
+                                <path d="M8 9h8M8 12h5"/>
+                            </svg>
+                        </div>
+                        <h3>Meeting Insights</h3>
+                        <p>
+                            Review available meeting summaries, transcripts,
+                            and analysis results in the relevant result page
+                            when those features are configured and working.
+                        </p>
+                    </article>
+
+                    <article class="about-card">
+                        <div class="about-card-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 4h14v16H5z"/>
+                                <path d="M8 8h8M8 12h8M8 16h5"/>
+                            </svg>
+                        </div>
+                        <h3>Meeting Organization</h3>
+                        <p>
+                            Access your meetings and previously saved records
+                            through the Meetings and View History sections,
+                            according to the data available in your app.
+                        </p>
+                    </article>
+
+                </div>
+            </section>
+
+            <!-- HOW TO USE -->
+            <section class="about-section" id="help">
+                <div class="about-section-header">
+                    <p class="about-eyebrow">USER GUIDE</p>
+                    <h2>How to Use MEETMIND AI</h2>
+                    <p>
+                        Follow these steps to navigate the website and use
+                        its main sections.
+                    </p>
+                </div>
+
+                <div class="help-list">
+
+                    <article class="help-step">
+                        <div class="help-step-number">01</div>
+                        <div>
+                            <h3>Open the Dashboard</h3>
+                            <p>
+                                Select Home from the sidebar. The dashboard
+                                provides the main starting point for submitting
+                                meeting content and accessing the application.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="help-step">
+                        <div class="help-step-number">02</div>
+                        <div>
+                            <h3>Select a Meeting Input</h3>
+                            <p>
+                                Choose a meeting file using the file selector,
+                                or enter a meeting URL in the URL field.
+                                Use only file formats and URL types supported
+                                by your current application.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="help-step">
+                        <div class="help-step-number">03</div>
+                        <div>
+                            <h3>Start Meeting Analysis</h3>
+                            <p>
+                                Click Analyze Meeting after providing the
+                                required input. Wait for the application to
+                                finish processing. Results depend on the
+                                analysis functionality configured in your app.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="help-step">
+                        <div class="help-step-number">04</div>
+                        <div>
+                            <h3>Review Meeting Results</h3>
+                            <p>
+                                When analysis is available, open the result
+                                page to review the transcript, summary, or
+                                other meeting information provided by your
+                                application.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="help-step">
+                        <div class="help-step-number">05</div>
+                        <div>
+                            <h3>Manage Your Meetings</h3>
+                            <p>
+                                Open Meetings to manage saved meeting records.
+                                Use View History to revisit earlier records
+                                that have been saved by the application.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="help-step">
+                        <div class="help-step-number">06</div>
+                        <div>
+                            <h3>Personalize Your Workspace</h3>
+                            <p>
+                                Visit Settings to manage available interface
+                                preferences, such as your display name,
+                                appearance, and other frontend options.
+                            </p>
+                        </div>
+                    </article>
+
+                </div>
+            </section>
+
+            <!-- TIPS -->
+            <section class="about-section">
+                <div class="about-section-header">
+                    <h2>Helpful Tips</h2>
+                    <p>
+                        A few simple recommendations for a smoother experience.
+                    </p>
+                </div>
+
+                <div class="about-tips">
+                    <ul>
+                        <li>
+                            Check that you have selected the correct file
+                            before starting an analysis.
+                        </li>
+                        <li>
+                            Make sure a meeting URL is complete and belongs
+                            to a source supported by your application.
+                        </li>
+                        <li>
+                            Keep important meeting information saved before
+                            leaving the page.
+                        </li>
+                        <li>
+                            If analysis fails, check the message displayed by
+                            the application and verify that its required
+                            services are running.
+                        </li>
+                        <li>
+                            Use the sidebar to navigate between the Dashboard,
+                            Meetings, View History, Settings, and About pages.
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- FAQ -->
+            <section class="about-section" id="faq">
+                <div class="about-section-header">
+                    <p class="about-eyebrow">SUPPORT</p>
+                    <h2>Frequently Asked Questions</h2>
+                    <p>
+                        Quick answers to common questions about the interface.
+                    </p>
+                </div>
+
+                <div class="faq-list">
+
+                    <article class="faq-item">
+                        <button class="faq-question" type="button"
+                                aria-expanded="false">
+                            <span>Where do I start a new meeting analysis?</span>
+                            <span class="faq-chevron" aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="faq-answer">
+                            Open Home from the sidebar. Select a supported
+                            meeting file or enter a meeting URL, then click
+                            Analyze Meeting.
+                        </div>
+                    </article>
+
+                    <article class="faq-item">
+                        <button class="faq-question" type="button"
+                                aria-expanded="false">
+                            <span>Where can I find my saved meetings?</span>
+                            <span class="faq-chevron" aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="faq-answer">
+                            Open Meetings to manage available meeting records
+                            or View History to revisit previously saved records.
+                            The records displayed depend on what your application
+                            has actually saved.
+                        </div>
+                    </article>
+
+                    <article class="faq-item">
+                        <button class="faq-question" type="button"
+                                aria-expanded="false">
+                            <span>Can I change the appearance of the website?</span>
+                            <span class="faq-chevron" aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="faq-answer">
+                            Use the theme button in the top bar to switch between
+                            light and dark appearance, if theme persistence is
+                            enabled for your current frontend.
+                        </div>
+                    </article>
+
+                    <article class="faq-item">
+                        <button class="faq-question" type="button"
+                                aria-expanded="false">
+                            <span>Why might analysis not work?</span>
+                            <span class="faq-chevron" aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="faq-answer">
+                            Meeting analysis may fail due to an unavailable backend server, unsupported file formats, network connectivity issues, or missing processing dependencies. 
+                            Ensure that the backend service is running, upload a supported audio, video, or document file, and check that all required AI models and processing tools are properly configured. 
+                            If the issue persists, check the server logs for error details and try again.
+                        </div>
+                    </article>
+
+                    
+                    <article class="faq-item">
+                        <button class="faq-question" type="button"
+                                aria-expanded="false">
+                            <span>Does the About page process meeting data?</span>
+                            <span class="faq-chevron" aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="faq-answer">
+                            No. This About and Help page is a frontend
+                            information page. It displays guidance and does
+                            not submit meeting files or perform analysis.
+                        </div>
+                    </article>
+
+                </div>
+            </section>
+
+            <!-- FOOTER -->
+            <footer class="about-footer">
+                <p>
+                    <strong>MEETMIND AI</strong><br>
+                    AI Meeting Intelligence System
+                </p>
+
+                <p>
+                    Designed to make meeting information easier to organize
+                    and review.
+                </p>
+
+                <a href="/home">Return to Home &rarr;</a>
+            </footer>
+
+        </div>
+    </main>
+</div>
+
+<script src="app-common.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    "use strict";
+
+    /* FAQ accordion */
+    document.querySelectorAll(".faq-question").forEach(function (button) {
+        button.addEventListener("click", function () {
+            const item = button.closest(".faq-item");
+            const willOpen = !item.classList.contains("open");
+
+            item.classList.toggle("open", willOpen);
+            button.setAttribute("aria-expanded", String(willOpen));
+        });
+    });
+
+    /* Shared profile display name */
+    function updateProfile() {
+        let name = "My Workspace";
+
+        try {
+            const settings = JSON.parse(
+                localStorage.getItem("meetmindDashboardSettings") || "{}"
+            );
+
+            name =
+                settings.displayName ||
+                settings.profileName ||
+                settings.name ||
+                name;
+        } catch (error) {
+            console.warn("Could not read profile settings.", error);
+        }
+
+        name = String(name).trim() || "My Workspace";
+
+        const nameElement = document.getElementById("headerProfileName");
+        const avatarElement = document.getElementById("headerAvatar");
+
+        if (nameElement) {
+            nameElement.textContent = name;
+        }
+
+        if (avatarElement) {
+            avatarElement.textContent = name
+                .split(/\s+/)
+                .map(function (part) {
+                    return part.charAt(0);
+                })
+                .join("")
+                .substring(0, 2)
+                .toUpperCase();
+        }
+    }
+
+    updateProfile();
+
+    window.addEventListener("storage", function (event) {
+        if (event.key === "meetmindDashboardSettings") {
+            updateProfile();
+        }
+    });
+
+    /* Frontend theme toggle */
+    const themeToggle = document.getElementById("themeToggle");
+    const themeToggleIcon = document.getElementById("themeToggleIcon");
+
+    function getSavedTheme() {
+        try {
+            return localStorage.getItem("meetmind-auth-theme") ||
+                   localStorage.getItem("meetingAITheme") ||
+                   "light";
+        } catch (error) {
+            return "light";
+        }
+    }
+
+    function applyTheme(isDark) {
+        document.body.classList.toggle("dark-mode", isDark);
+        document.documentElement.classList.toggle("dark-mode", isDark);
+
+        if (themeToggleIcon) {
+            themeToggleIcon.innerHTML = isDark
+                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>'
+                : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2z"/></svg>';
+        }
+
+        if (themeToggle) {
+            themeToggle.setAttribute(
+                "aria-label",
+                isDark ? "Switch to light mode" : "Switch to dark mode"
+            );
+        }
+
+        try {
+            localStorage.setItem(
+                "meetmind-auth-theme",
+                isDark ? "dark" : "light"
+            );
+            localStorage.setItem(
+                "meetingAITheme",
+                isDark ? "dark" : "light"
+            );
+        } catch (error) {
+            console.warn("Theme preference could not be saved.", error);
+        }
+    }
+
+    applyTheme(getSavedTheme() === "dark");
+
+    if (themeToggle) {
+        themeToggle.addEventListener("click", function () {
+            applyTheme(!document.body.classList.contains("dark-mode"));
+        });
+    }
+
+    /* Frontend notification information */
+    const notificationButton =
+        document.getElementById("notificationButton");
+
+    if (notificationButton) {
+        notificationButton.addEventListener("click", function () {
+            alert("You are viewing the MEETMIND AI About and Help page.");
+        });
+    }
+
+    /* Logout confirmation */
+    const logoutLink = document.getElementById("logoutLink");
+
+    if (logoutLink) {
+        logoutLink.addEventListener("click", function (event) {
+            const confirmed = confirm("Are you sure you want to log out?");
+
+            if (!confirmed) {
+                event.preventDefault();
+            }
+        });
+    }
+});
+</script>
+</body>
+</html>

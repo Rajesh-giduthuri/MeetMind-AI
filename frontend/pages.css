@@ -1,0 +1,389 @@
+
+/* =====================================================
+   MEETMIND AI - SHARED PAGE STYLES
+===================================================== */
+
+:root {
+    color-scheme: light;
+    --mm-sidebar-width: 274px;
+    --mm-topbar-height: 78px;
+}
+
+html {
+    min-height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button {
+    cursor: pointer;
+}
+
+:focus-visible {
+    outline: 3px solid rgba(89, 53, 245, 0.35);
+    outline-offset: 2px;
+}
+
+img {
+    max-width: 100%;
+}
+
+/* White panels in light mode */
+body:not(.dark-mode):not(.auth-dark) .settings-card,
+body:not(.dark-mode):not(.auth-dark) .settings-section,
+body:not(.dark-mode):not(.auth-dark) .setting-card,
+body:not(.dark-mode):not(.auth-dark) .content-card {
+    background: #ffffff;
+}
+
+/* Responsive tables */
+@media (max-width: 760px) {
+    .main-content,
+    .content,
+    .page-content {
+        min-width: 0;
+    }
+
+    table {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+}
+
+/* =====================================================
+   APPLICATION LAYOUT - DESKTOP
+===================================================== */
+
+body {
+    overflow: hidden;
+}
+
+/* Full viewport application */
+.app-layout {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    overflow: hidden !important;
+}
+
+/* Fixed sidebar */
+.app-layout > .sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: auto !important;
+    bottom: 0 !important;
+
+    box-sizing: border-box !important;
+    width: var(--mm-sidebar-width) !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+
+    z-index: 1200 !important;
+}
+
+/* Main area scrolls independently */
+.app-layout > .main-area {
+    position: relative !important;
+
+    box-sizing: border-box !important;
+    margin: 0 0 0 var(--mm-sidebar-width) !important;
+    width: calc(100% - var(--mm-sidebar-width)) !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+
+    /* Reserve space for the fixed header */
+    padding-top: var(--mm-topbar-height) !important;
+
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain;
+}
+
+/* =====================================================
+   FIXED TOP BAR
+===================================================== */
+
+.app-layout > .main-area > .topbar {
+    position: fixed !important;
+
+    /* Align with the right edge of the sidebar */
+    top: 0 !important;
+    left: var(--mm-sidebar-width) !important;
+    right: 0 !important;
+    bottom: auto !important;
+
+    box-sizing: border-box !important;
+    width: auto !important;
+
+    height: var(--mm-topbar-height) !important;
+    min-height: var(--mm-topbar-height) !important;
+    max-height: var(--mm-topbar-height) !important;
+
+    margin: 0 !important;
+    padding: 0 30px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+
+    flex-shrink: 0 !important;
+    overflow: visible !important;
+
+    z-index: 1100 !important;
+
+    background: #ffffff;
+    border-bottom: 1px solid #dfe3ef;
+    box-shadow: 0 2px 8px rgba(26, 32, 64, 0.025);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+/* Keep the left-side title or search area stable */
+.app-layout > .main-area > .topbar > :first-child {
+    min-width: 0;
+}
+
+/* Right-side topbar controls */
+.app-layout > .main-area > .topbar .topbar-actions {
+    position: relative !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+
+    gap: 12px !important;
+    min-width: max-content !important;
+    height: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Theme and notification buttons */
+.app-layout > .main-area > .topbar .dashboard-theme-toggle,
+.app-layout > .main-area > .topbar .notification-button {
+    position: relative !important;
+    box-sizing: border-box !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+
+    flex: 0 0 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+}
+
+/* Keep the icons centered */
+.app-layout > .main-area > .topbar .dashboard-theme-toggle svg,
+.app-layout > .main-area > .topbar .notification-button svg {
+    display: block;
+    width: 21px;
+    height: 21px;
+    flex-shrink: 0;
+}
+
+/* Profile area */
+.app-layout > .main-area > .topbar .profile-button {
+    position: relative !important;
+    box-sizing: border-box !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+
+    gap: 9px !important;
+    margin: 0 !important;
+
+    white-space: nowrap !important;
+    transform: none !important;
+}
+
+/* Avatar size */
+.app-layout > .main-area > .topbar .avatar,
+.app-layout > .main-area > .topbar #headerAvatar,
+.app-layout > .main-area > .topbar #profileAvatar {
+    box-sizing: border-box !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+
+    flex: 0 0 40px !important;
+    border-radius: 50%;
+}
+
+/* Main page sections */
+.app-layout > .main-area > .page-content,
+.app-layout > .main-area > .analysis-page,
+.app-layout > .main-area > .meetings-page,
+.app-layout > .main-area > .history-page,
+.app-layout > .main-area > .settings-page,
+.app-layout > .main-area > .about-page {
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* Anchor positions */
+.app-layout > .main-area [id] {
+    scroll-margin-top: 12px;
+}
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+body.dark-mode .app-layout > .main-area > .topbar {
+    background: #1c2032;
+    border-bottom-color: #3b4258;
+    color: #f1f1fc;
+}
+
+body.dark-mode .app-layout > .main-area > .topbar .dashboard-theme-toggle {
+    background: #24253c;
+    border-color: #444661;
+    color: #f1f1fc;
+}
+
+body.dark-mode .app-layout > .main-area > .topbar .notification-button,
+body.dark-mode .app-layout > .main-area > .topbar .profile-button {
+    color: #f1f1fc;
+}
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 900px) {
+    :root {
+        --mm-sidebar-width: 218px;
+    }
+
+    .app-layout > .main-area > .topbar {
+        padding-right: 18px !important;
+        padding-left: 18px !important;
+        gap: 10px !important;
+    }
+
+    .app-layout > .main-area > .topbar .topbar-actions {
+        gap: 7px !important;
+    }
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 680px) {
+    body {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .app-layout {
+        display: block !important;
+        height: auto !important;
+        min-height: 100vh !important;
+        overflow: visible !important;
+    }
+
+    .app-layout > .sidebar {
+        position: sticky !important;
+        top: 0 !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+
+        width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+
+        overflow: visible !important;
+    }
+
+    .app-layout > .main-area {
+        position: relative !important;
+
+        margin: 0 !important;
+        width: 100% !important;
+
+        height: auto !important;
+        min-height: 0 !important;
+
+        padding-top: 0 !important;
+
+        overflow: visible !important;
+    }
+
+    .app-layout > .main-area > .topbar {
+        position: sticky !important;
+
+        top: 0 !important;
+        left: auto !important;
+        right: auto !important;
+
+        width: 100% !important;
+
+        height: var(--mm-topbar-height) !important;
+        min-height: var(--mm-topbar-height) !important;
+        max-height: var(--mm-topbar-height) !important;
+
+        padding: 0 12px !important;
+        gap: 8px !important;
+    }
+
+    .app-layout > .main-area > .topbar .topbar-actions {
+        gap: 5px !important;
+    }
+
+    .app-layout > .main-area > .topbar .profile-button {
+        gap: 5px !important;
+    }
+}

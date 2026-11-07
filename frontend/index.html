@@ -1,0 +1,789 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="/static/meetmind-logo.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="MeetMind AI helps turn meeting recordings into organized transcripts, summaries, decisions and actionable next steps.">
+
+  <title>MeetMind AI | Turn Meetings Into Action</title>
+
+  <!-- Apply the saved theme before the page is styled -->
+  <script>
+    (function () {
+      try {
+        const savedTheme =
+          localStorage.getItem("meetmind-auth-theme") ||
+          localStorage.getItem("meetingAITheme");
+
+        if (savedTheme === "dark" || savedTheme === "dark-mode") {
+          document.documentElement.classList.add("dark-mode");
+        }
+      } catch (error) {
+        // Continue using the default theme if storage is unavailable.
+      }
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/landing.css">
+</head>
+
+<body>
+  <!-- ================= HEADER ================= -->
+  <header class="site-header">
+    <nav class="navbar container" aria-label="Main navigation">
+
+      <a class="brand" href="#home" aria-label="MeetMind AI home">
+        <img
+          src="/static/meetmind-logo.png"
+          alt=""
+          class="brand-logo"
+          width="38"
+          height="38"
+        >
+        <span>MeetMind <strong>AI</strong></span>
+      </a>
+
+      <button
+        class="menu-toggle"
+        id="menuToggle"
+        type="button"
+        aria-label="Toggle navigation"
+        aria-controls="navLinks"
+        aria-expanded="false"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-links" id="navLinks">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#demo">Demo</a>
+        <a href="#faq">FAQ</a>
+        <a href="#about">About</a>
+        <a class="mobile-login" href="/static/login.html">Log In</a>
+      </div>
+
+      <div class="nav-actions">
+        <a class="login-link" href="/static/login.html">Log In</a>
+
+        <a class="button button-small" href="/static/signup.html">
+          Get Started <span aria-hidden="true">↗</span>
+        </a>
+
+        <!-- LIGHT / DARK THEME TOGGLE -->
+        <button
+          class="theme-toggle"
+          id="themeToggle"
+          type="button"
+          aria-label="Switch color theme"
+          title="Switch theme"
+          aria-pressed="false"
+        >
+          <span id="themeIcon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2z"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+
+    </nav>
+  </header>
+
+  <main>
+    <!-- ================= HERO ================= -->
+    <section class="hero section-glow" id="home">
+      <div class="container hero-content">
+
+        <div class="eyebrow">
+          <span class="status-dot"></span>
+          MeetMind AI 2.0
+          <span class="eyebrow-divider">·</span>
+          Smarter Meetings
+        </div>
+
+        <h1>
+          Transform Meetings Into
+          <span>Actionable Intelligence.</span>
+        </h1>
+
+        <p class="hero-description">
+          Turn meeting recordings into clear transcripts, intelligent
+          summaries, important decisions and actionable next steps —
+          all in one place.
+        </p>
+
+        <div class="hero-actions">
+          <a class="button button-large" href="/static/signup.html">
+            Try It Free <span aria-hidden="true">→</span>
+          </a>
+
+          <a class="button button-large button-outline" href="#how-it-works">
+            Explore How It Works <span aria-hidden="true">↓</span>
+          </a>
+        </div>
+
+        <div class="hero-trust">
+          <span><span class="check">✓</span> Easy to use</span>
+          <span><span class="check">✓</span> Organized meeting notes</span>
+          <span><span class="check">✓</span> Less manual work</span>
+        </div>
+
+        <!-- Product preview -->
+        <div class="product-preview">
+          <div class="preview-window">
+
+            <div class="preview-topbar">
+              <div class="window-dots" aria-hidden="true">
+                <i></i><i></i><i></i>
+              </div>
+
+              <span>MeetMind AI Workspace</span>
+
+              <span class="preview-live">
+                <i></i> Meeting insights
+              </span>
+            </div>
+
+            <div class="preview-body">
+
+              <aside class="preview-sidebar">
+                <div class="preview-side-brand">
+                  <span class="mini-brand"></span>
+                  Workspace
+                </div>
+
+                <div class="preview-side-item active">▦ &nbsp; Overview</div>
+                <div class="preview-side-item">◷ &nbsp; Meetings</div>
+                <div class="preview-side-item">▤ &nbsp; Transcripts</div>
+                <div class="preview-side-item">✧ &nbsp; AI Insights</div>
+                <div class="preview-side-item">⚙ &nbsp; Settings</div>
+
+                <div class="preview-side-bottom">
+                  Your meetings, organized.
+                </div>
+              </aside>
+
+              <div class="preview-main">
+
+                <div class="preview-heading">
+                  <div>
+                    <small>YOUR WORKSPACE</small>
+                    <h3>Meeting overview</h3>
+                    <p>Turn conversations into meaningful progress.</p>
+                  </div>
+
+                  <span class="preview-date">AI-powered workspace</span>
+                </div>
+
+                <div class="preview-stats">
+                  <div class="stat-card">
+                    <span>Meeting insights</span>
+                    <strong>Organized</strong>
+                    <small>One clear workspace</small>
+                  </div>
+
+                  <div class="stat-card">
+                    <span>Key decisions</span>
+                    <strong>Highlighted</strong>
+                    <small>Find important outcomes</small>
+                  </div>
+
+                  <div class="stat-card">
+                    <span>Next steps</span>
+                    <strong>Actionable</strong>
+                    <small>Keep work moving</small>
+                  </div>
+                </div>
+
+                <div class="preview-detail">
+
+                  <div class="preview-summary">
+                    <div class="preview-section-title">
+                      <span>✦</span> Executive summary
+                    </div>
+
+                    <h4>Product Planning Meeting</h4>
+
+                    <p>
+                      The team discussed project priorities, upcoming
+                      milestones and ways to improve the product experience.
+                    </p>
+
+                    <div class="summary-line"></div>
+                    <div class="summary-line short"></div>
+                    <div class="summary-line medium"></div>
+                  </div>
+
+                  <div class="preview-tasks">
+                    <div class="preview-section-title">✓ Action items</div>
+
+                    <div class="task">
+                      <span class="task-check">✓</span>
+                      <div>
+                        <strong>Finalize requirements</strong>
+                        <small>Confirm the project scope</small>
+                      </div>
+                    </div>
+
+                    <div class="task">
+                      <span class="task-check">✓</span>
+                      <div>
+                        <strong>Review progress</strong>
+                        <small>Prepare the next update</small>
+                      </div>
+                    </div>
+
+                    <div class="task">
+                      <span class="task-check">✓</span>
+                      <div>
+                        <strong>Plan next steps</strong>
+                        <small>Organize upcoming tasks</small>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="floating-badge badge-top">
+            <span>✦</span> Smarter summaries
+          </div>
+
+          <div class="floating-badge badge-bottom">
+            <span>✓</span> Clear next steps
+          </div>
+        </div>
+
+        <p class="preview-caption">
+          A clearer way to capture what matters in every meeting.
+        </p>
+
+      </div>
+    </section>
+
+    <!-- ================= FEATURES ================= -->
+    <section class="section features-section" id="features">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="section-kicker">POWERFUL FEATURES</span>
+          <h2>
+            Everything your meetings
+            <span>need to move forward.</span>
+          </h2>
+          <p>
+            Spend less time organizing conversations and more time
+            acting on what matters.
+          </p>
+        </div>
+
+        <div class="features-grid">
+
+          <article class="feature-card">
+            <div class="feature-icon icon-purple" aria-hidden="true">♩</div>
+            <h3>Speech to Text</h3>
+            <p>
+              Convert supported meeting recordings into readable text
+              for easier review and reference.
+            </p>
+            <a href="#how-it-works" class="text-link">
+              Explore feature <span>→</span>
+            </a>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon icon-blue" aria-hidden="true">▤</div>
+            <h3>AI Summaries</h3>
+            <p>
+              Turn long discussions into concise overviews that help
+              you understand the main points.
+            </p>
+            <a href="#demo" class="text-link">
+              See sample <span>→</span>
+            </a>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon icon-green" aria-hidden="true">✓</div>
+            <h3>Action Items</h3>
+            <p>
+              Organize follow-up tasks so important responsibilities
+              are easier to review.
+            </p>
+            <a href="#demo" class="text-link">
+              See sample <span>→</span>
+            </a>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon icon-orange" aria-hidden="true">ϟ</div>
+            <h3>Key Decisions</h3>
+            <p>
+              Keep important outcomes and choices visible instead
+              of searching through long notes.
+            </p>
+            <a href="#demo" class="text-link">
+              See sample <span>→</span>
+            </a>
+          </article>
+
+          <article class="feature-card feature-card-wide">
+            <div class="feature-wide-copy">
+              <div class="feature-icon icon-pink" aria-hidden="true">✧</div>
+              <h3>Your AI Meeting Assistant</h3>
+              <p>
+                Make it easier to explore meeting information,
+                revisit important details and work with organized notes.
+              </p>
+              <a href="#demo" class="text-link">
+                Explore the sample <span>→</span>
+              </a>
+            </div>
+
+            <div class="assistant-preview">
+              <div class="chat-bubble">
+                What were the key decisions?
+              </div>
+
+              <div class="chat-answer">
+                <span aria-hidden="true">✦</span>
+                <p>
+                  Review the meeting summary and decision notes to
+                  find the main outcomes.
+                </p>
+              </div>
+
+              <div class="chat-input">
+                Ask about your meeting... <span>↑</span>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= HOW IT WORKS ================= -->
+    <section class="section how-section section-glow" id="how-it-works">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="section-kicker">SIMPLE WORKFLOW</span>
+          <h2>
+            From recording to
+            <span>results in three steps.</span>
+          </h2>
+          <p>
+            A straightforward workflow helps you turn meeting content
+            into useful information.
+          </p>
+        </div>
+
+        <div class="steps-grid">
+
+          <article class="step-card">
+            <div class="step-top">
+              <span class="step-icon" aria-hidden="true">↥</span>
+              <span class="step-number">01</span>
+            </div>
+
+            <h3>Upload a Recording</h3>
+            <p>
+              Start with a supported audio or video file from your meeting.
+            </p>
+
+            <div class="step-illustration">
+              <div class="file-illustration">
+                <span aria-hidden="true">♫</span>
+                <strong>meeting-recording</strong>
+                <small>Audio / Video file</small>
+              </div>
+              <span class="upload-arrow" aria-hidden="true">↑</span>
+            </div>
+          </article>
+
+          <article class="step-card">
+            <div class="step-top">
+              <span class="step-icon" aria-hidden="true">✧</span>
+              <span class="step-number">02</span>
+            </div>
+
+            <h3>Process with AI</h3>
+            <p>
+              Use the available processing workflow to organize transcripts
+              and meeting insights.
+            </p>
+
+            <div class="step-illustration processing-illustration">
+              <div class="processing-orbit">
+                ✦<span>AI</span>
+              </div>
+              <div class="processing-caption">Meeting intelligence</div>
+            </div>
+          </article>
+
+          <article class="step-card">
+            <div class="step-top">
+              <span class="step-icon" aria-hidden="true">✓</span>
+              <span class="step-number">03</span>
+            </div>
+
+            <h3>Review &amp; Take Action</h3>
+            <p>
+              Review the available output, revisit important points
+              and plan your next steps.
+            </p>
+
+            <div class="step-illustration result-illustration">
+              <div class="result-line"><span>✓</span><i></i></div>
+              <div class="result-line"><span>✓</span><i></i></div>
+              <div class="result-line"><span>✓</span><i></i></div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= INTERACTIVE DEMO ================= -->
+    <section class="section demo-section" id="demo">
+      <div class="container">
+
+        <div class="demo-panel">
+
+          <div class="demo-header">
+            <div>
+              <span class="section-kicker">EXPLORE THE EXPERIENCE</span>
+              <h2>Meeting insights, <span>at a glance.</span></h2>
+              <p>
+                Explore an illustrative example of how meeting information
+                can be organized.
+              </p>
+            </div>
+
+            <span class="demo-label">
+              <span></span> Illustrative sample
+            </span>
+          </div>
+
+          <div class="demo-tabs" role="tablist" aria-label="Sample meeting output">
+            <button
+              class="demo-tab active"
+              id="tab-summary"
+              type="button"
+              data-tab="summary"
+              role="tab"
+              aria-selected="true"
+              aria-controls="demoContent"
+            >
+              ▤ <span>Summary</span>
+            </button>
+
+            <button
+              class="demo-tab"
+              id="tab-decisions"
+              type="button"
+              data-tab="decisions"
+              role="tab"
+              aria-selected="false"
+              aria-controls="demoContent"
+            >
+              ϟ <span>Decisions</span>
+            </button>
+
+            <button
+              class="demo-tab"
+              id="tab-actions"
+              type="button"
+              data-tab="actions"
+              role="tab"
+              aria-selected="false"
+              aria-controls="demoContent"
+            >
+              ✓ <span>Action Items</span>
+            </button>
+
+            <button
+              class="demo-tab"
+              id="tab-transcript"
+              type="button"
+              data-tab="transcript"
+              role="tab"
+              aria-selected="false"
+              aria-controls="demoContent"
+            >
+              ♩ <span>Transcript</span>
+            </button>
+
+            <button
+              class="demo-tab"
+              id="tab-assistant"
+              type="button"
+              data-tab="assistant"
+              role="tab"
+              aria-selected="false"
+              aria-controls="demoContent"
+            >
+              ✧ <span>AI Assistant</span>
+            </button>
+          </div>
+
+          <div
+            class="demo-content"
+            id="demoContent"
+            role="tabpanel"
+            aria-labelledby="tab-summary"
+            aria-live="polite"
+            tabindex="0"
+          >
+            <span class="demo-content-kicker">EXECUTIVE SUMMARY</span>
+            <h3>Product Planning Meeting</h3>
+            <p>
+              The team reviewed product priorities, discussed the upcoming
+              development timeline and identified improvements to the
+              user experience.
+            </p>
+
+            <div class="demo-divider"></div>
+
+            <h4>Suggested next steps</h4>
+
+            <ul class="demo-list">
+              <li>
+                <span>01</span>
+                Confirm the project requirements and priorities.
+              </li>
+              <li>
+                <span>02</span>
+                Review the development timeline with the team.
+              </li>
+              <li>
+                <span>03</span>
+                Prepare the next progress update.
+              </li>
+            </ul>
+          </div>
+
+          <p class="demo-disclaimer">
+            This is sample content for demonstration only, not output
+            from an actual processed meeting.
+          </p>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ABOUT / BENEFITS ================= -->
+    <section class="section benefits-section" id="about">
+      <div class="container benefits-layout">
+
+        <div class="benefits-copy">
+          <span class="section-kicker">A BETTER WAY TO MEET</span>
+
+          <h2>
+            Keep the conversation.
+            <span>Remember the important things.</span>
+          </h2>
+
+          <p>
+            MeetMind AI is designed to help make meeting information
+            easier to revisit and use, from the first conversation
+            to the next action.
+          </p>
+
+          <a class="button button-large" href="/static/signup.html">
+            Get Started Today <span>→</span>
+          </a>
+        </div>
+
+        <div class="benefits-list">
+
+          <div class="benefit">
+            <span class="benefit-check">✓</span>
+            <div>
+              <h3>Less manual note-taking</h3>
+              <p>
+                Spend less time organizing meeting information by hand.
+              </p>
+            </div>
+          </div>
+
+          <div class="benefit">
+            <span class="benefit-check">✓</span>
+            <div>
+              <h3>Clearer meeting outcomes</h3>
+              <p>
+                Keep summaries, decisions and follow-up information organized.
+              </p>
+            </div>
+          </div>
+
+          <div class="benefit">
+            <span class="benefit-check">✓</span>
+            <div>
+              <h3>Information in one place</h3>
+              <p>
+                Return to meeting records when you need to review the discussion.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FAQ ================= -->
+    <section class="section faq-section" id="faq">
+      <div class="container faq-layout">
+
+        <div class="faq-intro">
+          <span class="section-kicker">NEED TO KNOW?</span>
+          <h2>Frequently asked <span>questions.</span></h2>
+          <p>
+            Some quick answers to help you get started with MeetMind AI.
+          </p>
+        </div>
+
+        <div class="faq-list">
+
+          <details class="faq-item">
+            <summary>What is MeetMind AI?<span>+</span></summary>
+            <p>
+              MeetMind AI is a meeting intelligence interface designed
+              to help organize recordings, transcripts, summaries and
+              follow-up information.
+            </p>
+          </details>
+
+          <details class="faq-item">
+            <summary>What can I do with a meeting recording?<span>+</span></summary>
+            <p>
+              You can upload a supported recording through the application.
+              The available transcript and analysis features depend on the
+              processing functionality configured in your project.
+            </p>
+          </details>
+
+          <details class="faq-item">
+            <summary>Can I review important meeting details later?<span>+</span></summary>
+            <p>
+              The application is designed to make meeting information
+              easier to revisit. Available history and saved results depend
+              on the features enabled in your account.
+            </p>
+          </details>
+
+          <details class="faq-item">
+            <summary>Does the sample output represent real AI results?<span>+</span></summary>
+            <p>
+              No. The interactive output on this homepage is illustrative
+              sample content. Actual results require the corresponding
+              processing functionality.
+            </p>
+          </details>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FINAL CTA ================= -->
+    <section class="final-cta section-glow">
+      <div class="container final-cta-inner">
+
+        <span class="cta-sparkle" aria-hidden="true">✦</span>
+
+        <h2>Make every meeting <span>more meaningful.</span></h2>
+
+        <p>
+          Bring your meeting information into a clearer,
+          more organized workflow.
+        </p>
+
+        <a class="button button-large" href="/static/signup.html">
+          Get Started with MeetMind AI <span>→</span>
+        </a>
+
+        <small>Start exploring a smarter way to organize meetings.</small>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="site-footer">
+    <div class="container">
+
+      <div class="footer-grid">
+
+        <div class="footer-brand-column">
+          <a class="brand footer-brand" href="#home" aria-label="MeetMind AI home">
+            <img
+              src="/static/meetmind-logo.png"
+              alt=""
+              class="brand-logo"
+              width="38"
+              height="38"
+            >
+            <span>MeetMind <strong>AI</strong></span>
+          </a>
+
+          <p>
+            Turn meeting conversations into organized information
+            and meaningful next steps.
+          </p>
+        </div>
+
+        <div class="footer-column">
+          <h4>PRODUCT</h4>
+          <a href="#features">Features</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#demo">Demo</a>
+        </div>
+
+        <div class="footer-column">
+          <h4>RESOURCES</h4>
+          <a href="#faq">FAQs</a>
+          <a href="#about">About MeetMind</a>
+          <a href="/static/login.html">Log In</a>
+        </div>
+
+        <div class="footer-column">
+          <h4>YOUR ACCOUNT</h4>
+          <a href="/static/signup.html">Create Account</a>
+          <a href="/static/login.html">Sign In</a>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <span>
+          © <span id="year"></span> MeetMind AI. All rights reserved.
+        </span>
+        <a href="#home">Back to top ↑</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <script src="/static/landing.js"></script>
+</body>
+</html>

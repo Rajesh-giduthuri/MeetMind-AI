@@ -1,0 +1,877 @@
+
+/* =========================================
+   1. GLOBAL STYLES
+========================================= */
+
+:root {
+    --primary: #5935f5;
+    --primary-hover: #4523dc;
+    --primary-light: #f0edff;
+    --text: #17182b;
+    --muted: #6e748d;
+    --border: #dfe3ef;
+    --white: #ffffff;
+    --success: #15835e;
+    --error: #d12f48;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--text);
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+    outline: 3px solid #bcb0ff;
+    outline-offset: 3px;
+}
+
+/* =========================================
+   2. AUTHENTICATION BACKGROUND
+========================================= */
+
+.auth-page {
+    min-height: 100vh;
+    min-height: 100dvh;
+    background-color: #fbfbff;
+    background-image:
+        radial-gradient(
+            ellipse at 11% 17%,
+            rgba(196, 163, 255, 0.30),
+            transparent 34%
+        ),
+        radial-gradient(
+            ellipse at 91% 72%,
+            rgba(147, 185, 255, 0.25),
+            transparent 37%
+        ),
+        radial-gradient(
+            ellipse at 50% 58%,
+            rgba(218, 222, 255, 0.38),
+            transparent 48%
+        );
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+/* =========================================
+   3. AUTHENTICATION SCREEN
+========================================= */
+
+.auth-screen {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 18px;
+}
+
+/* =========================================
+   4. LOGIN AND SIGNUP CARDS
+========================================= */
+
+.auth-card {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    padding: 34px 38px 30px;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(222, 224, 239, 0.88);
+    border-radius: 18px;
+    box-shadow:
+        0 15px 45px rgba(40, 38, 90, 0.06),
+        0 2px 8px rgba(40, 38, 90, 0.02);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.signup-card {
+    padding-top: 30px;
+    padding-bottom: 27px;
+}
+
+/* =========================================
+   5. DARK / LIGHT THEME TOGGLE
+========================================= */
+
+.auth-theme-toggle {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid #dfe3ef;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.94);
+    color: #34354a;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.auth-theme-toggle:hover {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.auth-theme-toggle:active {
+    transform: scale(0.97);
+}
+
+.auth-theme-toggle span {
+    display: block;
+}
+
+/* =========================================
+   6. BRAND AND HEADINGS
+========================================= */
+
+.auth-header {
+    margin-bottom: 26px;
+    text-align: center;
+}
+
+.auth-brand {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+    text-decoration: none;
+}
+
+.auth-brand:hover {
+    text-decoration: none;
+}
+
+.brand-title {
+    color: #111326;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+    line-height: 1.25;
+}
+
+.brand-title span {
+    color: var(--primary);
+}
+
+.brand-subtitle {
+    margin-top: 6px;
+    color: #626984;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.auth-header h2 {
+    margin-top: 0;
+    color: var(--text);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.welcome-description {
+    margin-top: 7px;
+    color: #737990;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* =========================================
+   7. GOOGLE SIGN-IN BUTTON
+========================================= */
+
+.google-button {
+    width: 100%;
+    min-height: 49px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 1px solid #e0e2eb;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #252535;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.google-button:hover {
+    background: #fafaff;
+    border-color: #d3d5e6;
+    box-shadow: 0 5px 15px rgba(35, 35, 80, 0.07);
+}
+
+.google-button:active {
+    transform: scale(0.99);
+}
+
+.google-icon {
+    display: block;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* =========================================
+   8. FORM FIELDS
+========================================= */
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.form-group input {
+    display: block;
+    width: 100%;
+    height: 49px;
+    padding: 0 14px;
+    border: 1px solid #cfd3eb;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.76);
+    color: var(--text);
+    font-size: 13px;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.form-group input::placeholder {
+    color: #858da8;
+    opacity: 1;
+}
+
+.form-group input:hover {
+    border-color: #b8bde0;
+}
+
+.form-group input:focus {
+    border-color: var(--primary);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(89, 53, 245, 0.11);
+    outline: none;
+}
+
+.form-group input:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+/* =========================================
+   9. PASSWORD SHOW / HIDE
+========================================= */
+
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper input {
+    padding-right: 65px;
+}
+
+.password-toggle {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    right: 13px;
+    transform: translateY(-50%);
+    padding: 5px 0;
+    border: none;
+    background: transparent;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.password-toggle:hover {
+    color: var(--primary-hover);
+}
+
+.field-hint {
+    display: block;
+    margin-top: 7px;
+    color: #626984;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* =========================================
+   10. REMEMBER ME AND FORGOT PASSWORD
+========================================= */
+
+.login-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 2px 0 22px;
+}
+
+.remember-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.remember-option input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.login-options a {
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* =========================================
+   11. PRIMARY BUTTON
+========================================= */
+
+.primary-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 11px;
+    background: linear-gradient(105deg, #7046ff, #4821e9);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(89, 53, 245, 0.22);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+}
+
+.primary-button span {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.primary-button:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 23px rgba(89, 53, 245, 0.27);
+}
+
+.primary-button:active {
+    transform: translateY(0);
+}
+
+.primary-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+    box-shadow: none;
+    transform: none;
+}
+
+/* =========================================
+   12. OR DIVIDER
+========================================= */
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 23px 0 20px;
+    color: #626984;
+    font-size: 12px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: rgba(120, 125, 165, 0.30);
+}
+
+/* =========================================
+   13. ACCOUNT LINKS
+========================================= */
+
+.signup-prompt {
+    margin-top: 22px;
+    color: #505875;
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.7;
+}
+
+.signup-prompt a {
+    margin-left: 5px;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.auth-home-link {
+    margin-top: 17px;
+    text-align: center;
+    font-size: 12px;
+}
+
+.auth-home-link a {
+    color: var(--muted);
+}
+
+.auth-home-link a:hover {
+    color: var(--primary);
+}
+
+/* =========================================
+   14. STATUS MESSAGES
+========================================= */
+
+.form-message {
+    margin: 0 0 13px;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.form-message:empty {
+    display: none;
+}
+
+.form-message.error {
+    color: var(--error);
+}
+
+.form-message.success {
+    color: var(--success);
+}
+
+/* =========================================
+   15. FOOTER
+========================================= */
+
+.auth-footer {
+    width: 100%;
+    max-width: 460px;
+    margin-top: 17px;
+    color: #737990;
+    font-size: 11px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+/* =========================================
+   16. SIGNUP CARD SPACING
+========================================= */
+
+.signup-card .auth-header {
+    margin-bottom: 21px;
+}
+
+.signup-card .auth-brand {
+    margin-bottom: 20px;
+}
+
+.signup-card .auth-header h2 {
+    margin-top: 0;
+}
+
+.signup-card .form-group {
+    margin-bottom: 14px;
+}
+
+.signup-card .auth-divider {
+    margin-top: 20px;
+    margin-bottom: 16px;
+}
+
+/* =========================================
+   17. LOGIN-SPECIFIC SPACING
+========================================= */
+
+.login-page .auth-header {
+    margin-bottom: 25px;
+}
+
+.login-page .auth-brand {
+    margin-bottom: 24px;
+}
+
+.login-page .auth-divider {
+    margin-top: 22px;
+    margin-bottom: 21px;
+}
+
+/* =========================================
+   18. DARK MODE — LOGIN AND SIGNUP
+========================================= */
+
+/* The theme script adds auth-dark to html and body. */
+
+html.auth-dark,
+html.auth-dark body,
+body.auth-page.auth-dark {
+    color: #f1f1fc !important;
+    background-color: #11121f !important;
+    background-image:
+        radial-gradient(
+            ellipse at 12% 15%,
+            rgba(100, 63, 190, 0.24),
+            transparent 36%
+        ),
+        radial-gradient(
+            ellipse at 90% 75%,
+            rgba(49, 80, 160, 0.22),
+            transparent 38%
+        ),
+        linear-gradient(
+            135deg,
+            #11121f,
+            #191a2c
+        ) !important;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+html.auth-dark body.auth-page,
+body.auth-page.auth-dark {
+    --text: #f1f1fc;
+    --muted: #b4b7d0;
+    --border: #383951;
+}
+
+html.auth-dark .auth-screen,
+body.auth-dark .auth-screen {
+    color: #f1f1fc !important;
+    background: transparent !important;
+}
+
+html.auth-dark .auth-card,
+body.auth-dark .auth-card {
+    color: #f1f1fc !important;
+    background: rgba(27, 28, 46, 0.96) !important;
+    border-color: #373850 !important;
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.30) !important;
+}
+
+html.auth-dark .brand-title,
+html.auth-dark .auth-header h2,
+html.auth-dark .form-group label,
+html.auth-dark .remember-option,
+html.auth-dark .auth-divider,
+html.auth-dark .signup-prompt,
+html.auth-dark .signup-prompt a,
+html.auth-dark .login-options a,
+html.auth-dark .welcome-description,
+body.auth-dark .brand-title,
+body.auth-dark .auth-header h2,
+body.auth-dark .form-group label,
+body.auth-dark .remember-option,
+body.auth-dark .auth-divider,
+body.auth-dark .signup-prompt,
+body.auth-dark .signup-prompt a,
+body.auth-dark .login-options a,
+body.auth-dark .welcome-description {
+    color: #f1f1fc !important;
+}
+
+html.auth-dark .brand-title span,
+body.auth-dark .brand-title span {
+    color: #a995ff !important;
+}
+
+html.auth-dark .brand-subtitle,
+html.auth-dark .field-hint,
+html.auth-dark .auth-footer,
+html.auth-dark .auth-home-link,
+html.auth-dark .auth-home-link a,
+body.auth-dark .brand-subtitle,
+body.auth-dark .field-hint,
+body.auth-dark .auth-footer,
+body.auth-dark .auth-home-link,
+body.auth-dark .auth-home-link a {
+    color: #b4b7d0 !important;
+}
+
+html.auth-dark .form-group input,
+body.auth-dark .form-group input {
+    color: #f1f1fc !important;
+    background: #202137 !important;
+    border-color: #42445f !important;
+}
+
+html.auth-dark .form-group input::placeholder,
+body.auth-dark .form-group input::placeholder {
+    color: #a2a5c0 !important;
+    opacity: 1;
+}
+
+html.auth-dark .form-group input:focus,
+body.auth-dark .form-group input:focus {
+    background: #24253d !important;
+    border-color: #927aff !important;
+    box-shadow: 0 0 0 3px rgba(146, 122, 255, 0.14) !important;
+}
+
+html.auth-dark .google-button,
+body.auth-dark .google-button {
+    color: #f1f1fc !important;
+    background: #22233a !important;
+    border-color: #41435e !important;
+}
+
+html.auth-dark .google-button:hover,
+body.auth-dark .google-button:hover {
+    background: #2b2c46 !important;
+}
+
+html.auth-dark .auth-divider::before,
+html.auth-dark .auth-divider::after,
+body.auth-dark .auth-divider::before,
+body.auth-dark .auth-divider::after {
+    background: #42445f !important;
+}
+
+html.auth-dark .auth-theme-toggle,
+body.auth-dark .auth-theme-toggle {
+    color: #f1f1fc !important;
+    background: #24253c !important;
+    border-color: #444661 !important;
+}
+
+html.auth-dark .auth-theme-toggle:hover,
+body.auth-dark .auth-theme-toggle:hover {
+    border-color: #927aff !important;
+    background: #30314c !important;
+}
+
+html.auth-dark .password-toggle,
+body.auth-dark .password-toggle {
+    color: #b9aaff !important;
+}
+
+html.auth-dark .form-message.error,
+body.auth-dark .form-message.error {
+    color: #ff9da9 !important;
+}
+
+html.auth-dark .form-message.success,
+body.auth-dark .form-message.success {
+    color: #7ce3b7 !important;
+}
+
+/* =========================================
+   19. TABLET RESPONSIVE
+========================================= */
+
+@media (max-width: 1000px) {
+    .auth-screen {
+        padding: 28px 24px;
+    }
+
+    .auth-card {
+        max-width: 460px;
+        padding: 32px 30px;
+    }
+
+    .signup-card {
+        padding-top: 30px;
+        padding-bottom: 27px;
+    }
+
+    .brand-title {
+        font-size: 30px;
+    }
+}
+
+/* =========================================
+   20. MOBILE RESPONSIVE
+========================================= */
+
+@media (max-width: 700px) {
+    .auth-screen {
+        justify-content: center;
+        align-items: center;
+        padding: 24px 16px;
+    }
+
+    .auth-card {
+        max-width: 460px;
+        padding: 34px 24px 26px;
+        border-radius: 17px;
+        background: rgba(255, 255, 255, 0.84);
+    }
+
+    .signup-card {
+        padding-top: 34px;
+        padding-bottom: 26px;
+    }
+
+    .brand-title {
+        font-size: 29px;
+    }
+
+    .brand-subtitle {
+        font-size: 13px;
+    }
+
+    .auth-header h2 {
+        font-size: 22px;
+    }
+
+    .auth-footer {
+        padding: 0 8px;
+    }
+
+    .auth-theme-toggle {
+        top: 14px;
+        right: 14px;
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+    }
+
+    .auth-brand {
+        margin-top: 10px;
+    }
+
+    /* Prevent mobile styles from making the dark card white. */
+    html.auth-dark .auth-card,
+    body.auth-dark .auth-card {
+        background: rgba(27, 28, 46, 0.96) !important;
+    }
+}
+
+/* =========================================
+   21. SMALL MOBILE
+========================================= */
+
+@media (max-width: 380px) {
+    .auth-screen {
+        padding: 18px 12px;
+    }
+
+    .auth-card {
+        padding: 32px 18px 23px;
+        border-radius: 15px;
+    }
+
+    .brand-title {
+        font-size: 26px;
+        letter-spacing: -0.9px;
+    }
+
+    .brand-subtitle {
+        font-size: 12px;
+    }
+
+    .auth-header h2 {
+        font-size: 21px;
+    }
+
+    .login-options {
+        flex-wrap: wrap;
+    }
+
+    .form-group input {
+        height: 47px;
+    }
+
+    .auth-theme-toggle {
+        top: 12px;
+        right: 12px;
+        width: 34px;
+        height: 34px;
+    }
+}
+
+/* =========================================
+   22. ACCESSIBILITY
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

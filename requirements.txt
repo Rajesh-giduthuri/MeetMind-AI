@@ -1,0 +1,17 @@
+
+fastapi
+uvicorn[standard]
+python-multipart
+groq
+python-dotenv
+sqlalchemy
+yt-dlp
+reportlab
+python-docx
+pypdf
+requests
+authlib
+httpx
+email-validator
+itsdangerous
+pydantic

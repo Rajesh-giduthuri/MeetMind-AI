@@ -1,0 +1,22 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python environment
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Database and private data
+*.db
+data/
+
+# Uploaded and generated files
+uploads/
+outputs/
+
+# Editor and test files
+.vscode/
+.pytest_cache/

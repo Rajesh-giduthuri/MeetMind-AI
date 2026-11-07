@@ -1,0 +1,1342 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="/static/meetmind-logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f5ff">
+    <title>My Meetings | MEETMIND AI</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="pages.css">
+
+    <style>
+        /* =====================================
+           MEETINGS PAGE
+        ===================================== */
+        .meeting-card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .file-icon-box {
+            width: 60px;
+            height: 60px;
+            min-width: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .meeting-card-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-icon-box.video {
+            background: #eaf2ff;
+            color: #2478f3;
+        }
+        .file-icon-box.audio {
+            background: #e2fbf1;
+            color: #0bb88c;
+        }
+
+        .file-icon-box.pdf,
+        .file-icon-box.document {
+            background: #ffeaed;
+            color: #ef3f50;
+        }
+
+
+        .file-icon-box svg {
+            width: 28px;
+            height: 28px;
+            display: block;
+        }
+
+        .file-icon-box.document,
+        .file-icon-box.pdf {
+            background: #ffe8ec !important;
+            color: #ed334f !important;
+        }
+        
+        .meetings-page {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        .meetings-heading h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+            color: var(--text, #17182b);
+        }
+
+        .meetings-heading p {
+            margin: 0;
+            color: var(--muted, #6e748d);
+            line-height: 1.6;
+        }
+
+        .meetings-toolbar {
+            display: flex;
+            gap: 12px;
+            margin: 25px 0;
+        }
+
+        .meetings-search {
+            flex: 1;
+            min-width: 0;
+            padding: 13px 15px;
+            border: 1px solid var(--border, #dfe3ef);
+            border-radius: 10px;
+            background: var(--white, #fff);
+            color: var(--text, #17182b);
+            font-size: 15px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .meetings-search:focus {
+            border-color: #6850f5;
+        }
+
+        .new-meeting-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 9px;
+            background: #6850f5;
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .new-meeting-btn:hover {
+            background: #5137df;
+        }
+
+        .meetings-count {
+            margin-bottom: 15px;
+            color: var(--muted, #6e748d);
+            font-size: 14px;
+        }
+
+        .meetings-list {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(min(100%, 260px), 1fr)
+            );
+            gap: 18px;
+        }
+
+        .meeting-card {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-width: 0;
+            padding: 22px;
+            border: 1px solid var(--border, #dfe3ef);
+            border-radius: 14px;
+            background: var(--white, #fff);
+            color: var(--text, #17182b);
+            box-shadow: 0 8px 24px rgba(36, 32, 80, 0.04);
+        }
+
+        .meeting-card h3 {
+            margin: 0 0 10px;
+            color: var(--text, #17182b);
+            font-size: 18px;
+            overflow-wrap: anywhere;
+        }
+
+        .meeting-date {
+            margin-top: 12px;
+            color: var(--muted, #6e748d);
+            font-size: 13px;
+        }
+
+        .meeting-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .meeting-btn {
+            padding: 10px 12px;
+            border: 1px solid var(--border, #dfe3ef);
+            border-radius: 8px;
+            background: var(--white, #fff);
+            color: var(--text, #17182b);
+            cursor: pointer;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .meeting-btn:hover {
+            border-color: #6850f5;
+            color: #6850f5;
+        }
+
+        .meeting-btn.primary {
+            background: #6850f5;
+            color: #fff;
+            border-color: #6850f5;
+        }
+
+        .meeting-btn.delete {
+            background: #fff0f1;
+            border: 1px solid #ffe0e3;
+            color: #dc3545;
+        }
+
+        .meeting-btn.delete:hover {
+            background: #ffe0e3;
+            border-color: #dc3545;
+            color: #c82333;
+        }
+
+        .meetings-empty {
+            grid-column: 1 / -1;
+            padding: 55px 20px;
+            text-align: center;
+            border: 1px dashed var(--border, #dfe3ef);
+            border-radius: 14px;
+            color: var(--muted, #6e748d);
+        }
+
+        .meetings-empty h3 {
+            color: var(--text, #17182b);
+        }
+
+        .meetings-empty a {
+            display: inline-block;
+            margin-top: 12px;
+            color: #6850f5;
+            text-decoration: none;
+        }
+
+        /* =====================================
+           STABLE TOP BAR
+        ===================================== */
+
+        .app-layout > .main-area > .topbar {
+            box-sizing: border-box;
+            width: 100%;
+            height: 78px;
+            min-height: 78px;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+            background: var(--white, #fff);
+            border-bottom: 1px solid var(--border, #dfe3ef);
+        }
+
+        .meetings-topbar-title {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .meetings-topbar-title h3 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .app-layout > .main-area > .topbar .topbar-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            flex: 0 0 auto;
+            min-width: max-content;
+            height: 100%;
+        }
+
+        .app-layout > .main-area > .topbar .dashboard-theme-toggle,
+        .app-layout > .main-area > .topbar .notification-button {
+            box-sizing: border-box;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            flex: 0 0 40px;
+            margin: 0;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transform: none;
+        }
+
+        .dashboard-theme-toggle {
+            border: 1px solid #dfe3ef;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #34354a;
+            cursor: pointer;
+        }
+
+        .dashboard-theme-toggle:hover {
+            border-color: #5935f5;
+        }
+
+        .dashboard-theme-toggle svg,
+        .notification-button svg {
+            display: block;
+            width: 21px;
+            height: 21px;
+        }
+
+        .notification-button {
+            position: relative;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            background: transparent;
+            color: var(--text, #34354a);
+            cursor: pointer;
+        }
+
+        .notification-button:hover {
+            background: var(--primary-light, #f0edff);
+        }
+
+        .notification-button .notification {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+        }
+
+        .app-layout > .main-area > .topbar .profile-button {
+            box-sizing: border-box;
+            height: 48px;
+            min-height: 48px;
+            padding: 4px 10px;
+            margin: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 9px;
+            flex: 0 0 auto;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text, #17182b);
+            font: inherit;
+            font-size: 13px;
+            text-decoration: none;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .profile-button:hover {
+            background: var(--primary-light, #f0edff);
+        }
+
+        .app-layout > .main-area > .topbar .avatar {
+            box-sizing: border-box;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            flex: 0 0 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #6979c4;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .profile-chevron {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 16px;
+        }
+
+        .profile-chevron svg {
+            display: block;
+            width: 16px;
+            height: 16px;
+        }
+
+        /* =====================================
+           DARK MODE
+        ===================================== */
+
+        body.dark-mode .topbar {
+            background: #1c2032;
+            border-bottom-color: #3b4258;
+        }
+
+        body.dark-mode .dashboard-theme-toggle {
+            background: #24253c;
+            color: #f1f1fc;
+            border-color: #444661;
+        }
+
+        body.dark-mode .notification-button,
+        body.dark-mode .profile-button {
+            color: #f1f1fc;
+        }
+
+        body.dark-mode .meetings-heading h1,
+        body.dark-mode .meeting-card h3,
+        body.dark-mode .meetings-empty h3 {
+            color: #f1f3ff;
+        }
+
+        body.dark-mode .meetings-heading p,
+        body.dark-mode .meetings-count,
+        body.dark-mode .meeting-date {
+            color: #b7bfd4;
+        }
+
+        body.dark-mode .meetings-search,
+        body.dark-mode .meeting-card,
+        body.dark-mode .meetings-empty {
+            background: #222638;
+            color: #f1f3ff;
+            border-color: #3b4258;
+        }
+
+        body.dark-mode .meetings-search::placeholder {
+            color: #a8b0c5;
+        }
+
+        body.dark-mode .meeting-btn {
+            background: #292f43;
+            color: #f1f3ff;
+            border-color: #454c64;
+        }
+
+        body.dark-mode .meeting-btn.primary {
+            background: #6850f5;
+            border-color: #6850f5;
+            color: #fff;
+        }
+
+        body.dark-mode .meeting-btn.delete {
+            background: #482b35;
+            color: #ff8b9a;
+            border-color: #65404b;
+        }
+
+        body.dark-mode .meeting-btn.delete:hover {
+            background: #5a303d;
+            color: #ffb0ba;
+            border-color: #ff6b81;
+        }
+
+        /* =====================================
+           RESPONSIVE
+        ===================================== */
+
+        @media (max-width: 650px) {
+            .app-layout > .main-area > .topbar {
+                padding: 0 14px;
+                gap: 8px;
+            }
+
+            .app-layout > .main-area > .topbar .topbar-actions {
+                gap: 5px;
+            }
+
+            .app-layout > .main-area > .topbar .profile-button {
+                gap: 5px;
+                padding: 4px;
+            }
+
+            .app-layout > .main-area > .topbar #headerProfileName,
+            .meetings-topbar-title h3 {
+                font-size: 13px;
+            }
+
+            .meetings-page {
+                padding: 20px 14px;
+            }
+
+            .meetings-heading h1 {
+                font-size: 25px;
+            }
+
+            .meetings-toolbar {
+                flex-direction: column;
+            }
+
+            .new-meeting-btn {
+                text-align: center;
+            }
+
+            .meeting-card {
+                padding: 17px;
+            }
+        }
+
+        .meeting-btn:focus-visible,
+        .notification-button:focus-visible,
+        .dashboard-theme-toggle:focus-visible {
+            outline: 3px solid #bcb0ff;
+            outline-offset: 3px;
+        }
+
+        .meeting-type {
+            display: inline-flex;
+            align-self: flex-start;
+            width: fit-content;
+            height: auto;
+            padding: 4px 9px;
+            margin-top: 6px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.4;
+            background: #fff0f3;
+            color: #f02d69;
+        }
+    </style>
+</head>
+
+<body>
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <a href="/home" class="brand">
+            <h2>MEETMIND <span>AI</span></h2>
+            <p>AI Meeting Intelligence System</p>
+        </a>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <a href="/home" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="4" width="6" height="6" rx="1"/>
+                        <rect x="14" y="4" width="6" height="6" rx="1"/>
+                        <rect x="4" y="14" width="6" height="6" rx="1"/>
+                        <rect x="14" y="14" width="6" height="6" rx="1"/>
+                    </svg>
+                </span>
+                Home
+            </a>
+
+            <a href="/static/meetings.html" class="nav-link active" aria-current="page">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="5" width="13" height="14" rx="2"/>
+                        <path d="m16 10 5-3v10l-5-3z"/>
+                    </svg>
+                </span>
+                Meetings
+            </a>
+
+            <a href="/static/history.html" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/>
+                        <path d="M3 3v5h5"/>
+                        <path d="M12 7v5l3 2"/>
+                    </svg>
+                </span>
+                View History
+            </a>
+
+            <a href="/static/about.html" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="M12 11v5"/>
+                        <path d="M12 7h.01"/>
+                    </svg>
+                </span>
+             About
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/static/settings.html" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="22" height="22"
+                         viewBox="0 0 50 50"
+                         fill="currentColor"
+                         aria-hidden="true">
+                        <path d="M 22.19 2 A 1.00 1.00 0 0 0 21.21 2.83 L 20.20 8.79 C 19.01 9.14 17.90 9.60 16.83 10.17 L 11.87 6.68 A 1.00 1.00 0 0 0 10.59 6.79 L 6.69 10.69 A 1.00 1.00 0 0 0 6.58 11.97 L 10.07 16.93 C 9.50 17.98 9.04 19.10 8.69 20.29 L 2.84 21.21 A 1.00 1.00 0 0 0 2 22.19 L 2 27.69 A 1.00 1.00 0 0 0 2.83 28.68 L 8.79 29.69 C 9.14 30.88 9.60 31.99 10.16 33.05 L 6.68 37.91 A 1.00 1.00 0 0 0 6.79 39.20 L 10.69 43.10 A 1.00 1.00 0 0 0 11.97 43.21 L 16.93 39.72 C 17.98 40.29 19.11 40.75 20.30 41.10 L 21.31 47.06 A 1.00 1.00 0 0 0 22.30 47.90 L 27.80 47.90 A 1.00 1.00 0 0 0 28.78 47.08 L 29.88 41.10 C 31.07 40.75 32.19 40.29 33.26 39.72 L 38.22 43.21 A 1.00 1.00 0 0 0 39.50 43.10 L 43.40 39.20 A 1.00 1.00 0 0 0 43.50 37.91 L 39.93 32.95 C 40.50 31.91 40.95 30.82 41.30 29.69 L 47.16 28.68 A 1.00 1.00 0 0 0 48 27.69 L 48 22.19 A 1.00 1.00 0 0 0 47.16 21.21 L 41.19 20.20 C 40.85 19.07 40.39 17.97 39.82 16.93 L 43.31 11.97 A 1.00 1.00 0 0 0 43.20 10.69 L 39.30 6.79 A 1.00 1.00 0 0 0 38.01 6.68 L 33.05 10.27 C 32.00 9.70 30.88 9.24 29.69 8.89 L 28.68 2.83 A 1.00 1.00 0 0 0 27.69 2 L 22.19 2 z M 23.04 4 L 26.85 4 L 27.81 9.76 A 1.00 1.00 0 0 0 28.55 10.57 C 30.07 10.94 31.47 11.51 32.67 12.25 A 1.00 1.00 0 0 0 33.78 12.21 L 38.49 8.80 L 41.19 11.51 L 37.88 16.22 A 1.00 1.00 0 0 0 37.84 17.32 C 38.58 18.52 39.15 19.93 39.53 21.35 A 1.00 1.00 0 0 0 40.33 22.08 L 46 23.04 L 46 26.85 L 40.42 27.81 A 1.00 1.00 0 0 0 39.63 28.54 C 39.25 29.96 38.68 31.37 37.94 32.57 A 1.00 1.00 0 0 0 37.99 33.68 L 41.39 38.39 L 38.68 41.09 L 33.97 37.78 A 1.00 1.00 0 0 0 32.90 37.73 C 31.56 38.49 30.26 39.05 28.75 39.42 A 1.00 1.00 0 0 0 28.01 40.21 L 26.96 45.90 L 23.14 45.90 L 22.18 40.23 A 1.00 1.00 0 0 0 21.44 39.42 C 19.92 39.05 18.52 38.48 17.32 37.74 A 1.00 1.00 0 0 0 16.22 37.78 L 11.51 41.09 L 8.80 38.39 L 12.11 33.78 A 1.00 1.00 0 0 0 12.16 32.70 C 11.40 31.36 10.84 30.06 10.47 28.55 A 1.00 1.00 0 0 0 9.66 27.81 L 4 26.85 L 4 23.05 L 9.55 22.18 A 1.00 1.00 0 0 0 10.37 21.44 C 10.74 19.92 11.31 18.52 12.05 17.32 A 1.00 1.00 0 0 0 12.01 16.22 L 8.70 11.51 L 11.41 8.80 L 16.12 12.11 A 1.00 1.00 0 0 0 17.19 12.16 C 18.53 11.40 19.83 10.84 21.34 10.47 A 1.00 1.00 0 0 0 22.08 9.66 L 23.04 4 z M 25 17 C 20.57 17 17 20.57 17 25 C 17 29.42 20.57 33 25 33 C 29.42 33 33 29.42 33 25 C 33 20.57 29.42 17 25 17 z M 25 19 C 28.37 19 31 21.62 31 25 C 31 28.37 28.37 31 25 31 C 21.62 31 19 28.37 19 25 z"/>
+                    </svg>
+                </span>
+                Settings
+            </a>
+
+            <a href="/" class="nav-link" id="logoutLink">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 17l5-5-5-5"/>
+                        <path d="M15 12H3"/>
+                        <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/>
+                    </svg>
+                </span>
+                Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-area">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <div class="meetings-topbar-title">
+            </div>
+
+            <div class="topbar-actions">
+
+                <button type="button"
+                        id="themeToggle"
+                        class="dashboard-theme-toggle"
+                        aria-label="Switch to dark mode"
+                        aria-pressed="false"
+                        title="Switch theme">
+                    <span id="themeToggleIcon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2z"/>
+                        </svg>
+                    </span>
+                </button>
+
+                <button type="button"
+                        id="notificationButton"
+                        class="notification-button"
+                        aria-label="Notifications"
+                        title="Notifications">
+                    <span class="topbar-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                            <path d="M10 21h4"/>
+                        </svg>
+                    </span>
+                    <span class="notification"></span>
+                </button>
+
+                <a href="settings.html" class="profile-button" id="profileButton">
+                    <span class="avatar" id="headerAvatar">S</span>
+                    <span id="headerProfileName">My Workspace</span>
+                    <span class="profile-chevron" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6"/>
+                        </svg>
+                    </span>
+                </a>
+
+            </div>
+        </header>
+
+        <!-- MEETINGS CONTENT -->
+        <section class="meetings-page">
+            <div class="meetings-heading">
+                <h1>My Meetings</h1>
+                <p>Manage and revisit your saved meeting recordings and links.</p>
+            </div>
+
+            <div class="meetings-toolbar">
+                <input
+                    type="search"
+                    id="meetingsSearch"
+                    class="meetings-search"
+                    placeholder="Search meetings..."
+                    aria-label="Search meetings">
+
+                <a href="/home" class="new-meeting-btn">
+                    + Analyze New Meeting
+                </a>
+            </div>
+
+            <div id="meetingsCount" class="meetings-count">
+                Loading meetings...
+            </div>
+
+            <div id="meetingsList" class="meetings-list"></div>
+        </section>
+
+    </main>
+</div>
+
+<script src="app-common.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    "use strict";
+
+    const meetingsList = document.getElementById("meetingsList");
+    const meetingsSearch = document.getElementById("meetingsSearch");
+    const meetingsCount = document.getElementById("meetingsCount");
+    const themeToggle = document.getElementById("themeToggle");
+    const themeToggleIcon = document.getElementById("themeToggleIcon");
+    const notificationButton = document.getElementById("notificationButton");
+    const logoutLink = document.getElementById("logoutLink");
+
+    const THEME_KEY = "meetmind-auth-theme";
+    const LEGACY_THEME_KEY = "meetingAITheme";
+    const SETTINGS_KEY = "meetmindDashboardSettings";
+
+    /* =====================================
+       PROFILE NAME
+    ===================================== */
+
+    function updateProfileName() {
+        let profileName = "My Workspace";
+
+        try {
+            const settings = JSON.parse(
+                localStorage.getItem(SETTINGS_KEY) || "{}"
+            );
+
+            profileName =
+                settings.displayName ||
+                settings.profileName ||
+                settings.name ||
+                profileName;
+        } catch (error) {
+            console.warn("Unable to read profile settings:", error);
+        }
+
+        profileName = String(profileName).trim() || "My Workspace";
+
+        const nameElement = document.getElementById("headerProfileName");
+        const avatarElement = document.getElementById("headerAvatar");
+        const profileButton = document.getElementById("profileButton");
+
+        if (nameElement) {
+            nameElement.textContent = profileName;
+        }
+
+        if (avatarElement) {
+            avatarElement.textContent = profileName
+                .split(/\s+/)
+                .map(function (word) {
+                    return word.charAt(0);
+                })
+                .join("")
+                .substring(0, 2)
+                .toUpperCase();
+        }
+
+        if (profileButton) {
+            profileButton.setAttribute("aria-label", profileName);
+        }
+    }
+
+    updateProfileName();
+
+    window.addEventListener("storage", function (event) {
+        if (event.key === SETTINGS_KEY) {
+            updateProfileName();
+        }
+
+        if (event.key === THEME_KEY || event.key === LEGACY_THEME_KEY) {
+            applyTheme(readTheme() === "dark");
+        }
+    });
+
+    /* =====================================
+       THEME TOGGLE
+    ===================================== */
+
+    function applyTheme(isDark) {
+        document.body.classList.toggle("dark-mode", isDark);
+        document.documentElement.classList.toggle("dark-mode", isDark);
+
+        themeToggleIcon.innerHTML = isDark
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>'
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2z"/></svg>';
+
+        const label = isDark
+            ? "Switch to light mode"
+            : "Switch to dark mode";
+
+        themeToggle.setAttribute("aria-label", label);
+        themeToggle.setAttribute("title", label);
+        themeToggle.setAttribute("aria-pressed", String(isDark));
+
+        try {
+            localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
+            localStorage.setItem(LEGACY_THEME_KEY, isDark ? "dark" : "light");
+        } catch (error) {
+            console.warn("Theme preference could not be saved.", error);
+        }
+    }
+
+    function readTheme() {
+        try {
+            return localStorage.getItem(THEME_KEY) ||
+                   localStorage.getItem(LEGACY_THEME_KEY) ||
+                   "light";
+        } catch (error) {
+            return "light";
+        }
+    }
+
+    applyTheme(readTheme() === "dark");
+
+    themeToggle.addEventListener("click", function () {
+        applyTheme(!document.body.classList.contains("dark-mode"));
+    });
+
+    /* =====================================
+       READ AND SAVE MEETINGS
+    ===================================== */
+
+    function readMeetings() {
+        try {
+            if (
+                window.MeetMind &&
+                typeof window.MeetMind.readMeetings === "function"
+            ) {
+                const result = window.MeetMind.readMeetings();
+
+                if (Array.isArray(result)) {
+                    return result;
+                }
+            }
+
+            const saved = localStorage.getItem("meetMindMeetings");
+            const data = saved ? JSON.parse(saved) : [];
+
+            return Array.isArray(data) ? data : [];
+        } catch (error) {
+            console.error("Unable to read meetings:", error);
+            return [];
+        }
+    }
+
+    function writeMeetings(meetings) {
+        if (
+            window.MeetMind &&
+            typeof window.MeetMind.writeMeetings === "function"
+        ) {
+            window.MeetMind.writeMeetings(meetings);
+            return;
+        }
+
+        localStorage.setItem("meetMindMeetings", JSON.stringify(meetings));
+    }
+
+    function getMeetingName(meeting) {
+        return (
+            meeting.name ||
+            meeting.meetingName ||
+            meeting.fileName ||
+            meeting.title ||
+            meeting.url ||
+            "Untitled Meeting"
+        );
+    }
+
+    function getMeetingType(meeting) {
+        if (meeting.type) {
+            return String(meeting.type).toUpperCase();
+        }
+
+        const filename = meeting.fileName || meeting.name || "";
+
+        if (filename.includes(".")) {
+            return filename.split(".").pop().toUpperCase();
+        }
+
+        return meeting.url ? "URL" : "MEETING";
+    }
+
+    function getMeetingDate(meeting) {
+        const rawDate =
+            meeting.date ||
+            meeting.createdAt ||
+            meeting.timestamp;
+
+        if (!rawDate) {
+            return "Date unavailable";
+        }
+
+        const date = new Date(rawDate);
+
+        return Number.isNaN(date.getTime())
+            ? String(rawDate)
+            : date.toLocaleString();
+    }
+
+    
+
+    function getFileIcon(meeting) {
+        const filename = String(
+            meeting.fileName || meeting.name || ""
+        ).toLowerCase();
+
+        const extension = filename.split(".").pop();
+
+        const icons = {
+            video: `
+                <svg viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="5" width="13" height="14" rx="2"/>
+                    <path d="m16 10 5-3v10l-5-3z"/>
+                </svg>
+            `,
+            audio: `
+                <svg viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3v18"/>
+                    <path d="M8 7v10"/>
+                    <path d="M4 10v4"/>
+                    <path d="M16 6v12"/>
+                    <path d="M20 9v6"/>
+                </svg>
+            `,
+            document: `
+                <svg viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <path d="M14 2v6h6"/>
+                    <path d="M8 13h8M8 17h8"/>
+                </svg>
+            `
+        };
+
+        if (["mp4", "webm", "mov", "avi", "mkv"].includes(extension)) {
+            return { className: "video", icon: icons.video };
+        }
+
+        if (["mp3", "wav", "m4a", "ogg", "aac", "flac"].includes(extension)) {
+            return { className: "audio", icon: icons.audio };
+        }
+
+        if (["pdf", "doc", "docx"].includes(extension)) {
+            return { className: "document", icon: icons.document };
+        }
+
+        return { className: "document", icon: icons.document };
+    }
+
+
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, function (character) {
+            const entities = {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            };
+
+            return entities[character];
+        });
+    }
+
+    function safeFilename(name) {
+        return String(name)
+            .replace(/[<>:"/\\|?*\x00-\x1F]/g, "_")
+            .replace(/\s+/g, "_")
+            .slice(0, 100) || "meeting";
+    }
+
+    /* =====================================
+       EXPORT MEETING
+    ===================================== */
+
+    function getExportDetails(meeting) {
+        return {
+            name: getMeetingName(meeting),
+            type: getMeetingType(meeting),
+            date: getMeetingDate(meeting),
+            url: meeting.url || "",
+            description: meeting.description || "",
+            summary: meeting.summary || "",
+            transcript: meeting.transcript || ""
+        };
+    }
+
+    async function downloadPDF(meeting) {
+        const meetingId = meeting.id;
+
+        try {
+            const response = await fetch(
+                "/api/meetings/" + encodeURIComponent(meetingId) + "/report/pdf",
+                {
+                    method: "GET",
+                    credentials: "same-origin"
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(
+                    errorData.detail || "Could not download the PDF."
+                );
+            }
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = safeFilename(getMeetingName(meeting)) + ".pdf";
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            URL.revokeObjectURL(url);
+
+        } catch (error) {
+            console.error("PDF download failed:", error);
+            alert(error.message);
+        }
+    }
+
+    async function downloadDOC(meeting) {
+        const meetingId = meeting.id;
+
+        try {
+            const response = await fetch(
+                "/api/meetings/" + encodeURIComponent(meetingId) + "/report/docx",
+                {
+                    method: "GET",
+                    credentials: "same-origin"
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(
+                    errorData.detail || "Could not download the Word document."
+                );
+            }
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = safeFilename(getMeetingName(meeting)) + ".docx";
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            URL.revokeObjectURL(url);
+
+        } catch (error) {
+            console.error("DOC download failed:", error);
+            alert(error.message);
+        }
+    }
+
+    /* =====================================
+       RENDER MEETING CARDS
+    ===================================== */
+
+    async function renderMeetings() {
+        const searchText = meetingsSearch.value.trim().toLowerCase();
+
+        let meetings = [];
+
+        meetingsList.innerHTML = "";
+        meetingsCount.textContent = "Loading meetings...";
+
+        try {
+            const response = await fetch("/api/meetings", {
+                method: "GET",
+                credentials: "same-origin"
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.detail || "Could not load meetings.");
+            }
+
+            meetings = (data.meetings || []).map(function (item) {
+                return {
+                    id: item.meeting_id,
+                    name: item.filename,
+                    fileName: item.filename,
+                    createdAt: item.created_at,
+                    type: item.filename.includes(".")
+                        ? item.filename.split(".").pop().toUpperCase()
+                        : "MEETING",
+                    duration: item.duration,
+                    status: item.status
+                };
+            });
+
+        } catch (error) {
+            console.error("Could not load meetings:", error);
+            meetingsCount.textContent = "Unable to load meetings.";
+            return;
+        }
+
+        const filtered = meetings.filter(function (meeting) {
+            return (
+                getMeetingName(meeting).toLowerCase().includes(searchText) ||
+                getMeetingType(meeting).toLowerCase().includes(searchText)
+            );
+        });
+
+        meetingsList.innerHTML = "";
+        meetingsCount.textContent =
+            filtered.length +
+            (filtered.length === 1 ? " meeting" : " meetings");
+
+        if (filtered.length === 0) {
+            const empty = document.createElement("div");
+            empty.className = "meetings-empty";
+
+            const heading = document.createElement("h3");
+            const message = document.createElement("p");
+            const link = document.createElement("a");
+
+            if (meetings.length === 0) {
+                heading.textContent = "No meetings saved yet";
+                message.textContent = "Analyze your first meeting to see it here.";
+            } else {
+                heading.textContent = "No matching meetings";
+                message.textContent = "Try another meeting name or file type.";
+            }
+
+            link.href = "/";
+            link.textContent = "+ Analyze a meeting";
+
+            empty.append(heading, message, link);
+            meetingsList.appendChild(empty);
+            return;
+        }
+
+        filtered.forEach(function (meeting) {
+            const meetingId = String(meeting.id ?? "");
+            const originalIndex = meetings.indexOf(meeting);
+
+            const card = document.createElement("article");
+            card.className = "meeting-card";
+
+            const cardHeader = document.createElement("div");
+            cardHeader.className = "meeting-card-header";
+
+            const visual = getFileIcon(meeting);
+
+            const iconBox = document.createElement("div");
+            iconBox.className = "file-icon-box " + visual.className;
+            iconBox.innerHTML = visual.icon;
+
+            const info = document.createElement("div");
+            info.className = "meeting-card-info";
+
+            const title = document.createElement("h3");
+            title.textContent = getMeetingName(meeting);
+
+            const type = document.createElement("span");
+            type.className = "meeting-type";
+            type.textContent = getMeetingType(meeting);
+
+            const date = document.createElement("div");
+            date.className = "meeting-date";
+            date.textContent = getMeetingDate(meeting);
+
+            info.append(title, date, type);
+
+            const actions = document.createElement("div");
+            actions.className = "meeting-actions";
+
+            /* Open meeting */
+            const openButton = document.createElement("button");
+            openButton.className = "meeting-btn primary";
+            openButton.type = "button";
+            openButton.textContent = "Open";
+
+            openButton.addEventListener("click", function () {
+                if (!meetingId) {
+                    alert("This meeting has no ID and cannot be opened.");
+                    return;
+                }
+
+                window.location.href =
+                    "analysis.html?id=" + encodeURIComponent(meetingId);
+            });
+
+            /* Rename meeting */
+            const renameButton = document.createElement("button");
+            renameButton.className = "meeting-btn";
+            renameButton.type = "button";
+            renameButton.textContent = "Rename";
+
+            renameButton.addEventListener("click", async function () {
+                const newName = prompt(
+                    "Enter a new meeting name:",
+                    getMeetingName(meeting)
+                );
+
+                if (newName === null) return;
+
+                if (!newName.trim()) {
+                    alert("Meeting name cannot be empty.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch(
+                        "/api/meetings/" + encodeURIComponent(meetingId) + "/rename",
+                        {
+                            method: "PATCH",
+                            credentials: "same-origin",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                filename: newName.trim()
+                            })
+                        }
+                    );
+
+                    const data = await response.json().catch(() => ({}));
+
+                    if (!response.ok) {
+                        throw new Error(data.detail || "Could not rename meeting.");
+                    }
+
+                    alert("Meeting renamed successfully.");
+                    renderMeetings();
+
+                } catch (error) {
+                    console.error("Could not rename meeting:", error);
+                    alert(error.message);
+                }
+            });
+
+            /* Delete meeting */
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "meeting-btn delete";
+            deleteButton.type = "button";
+            deleteButton.textContent = "Delete";
+
+            deleteButton.addEventListener("click", async function () {
+                const confirmed = confirm(
+                    'Delete "' + getMeetingName(meeting) +
+                    '" from your saved meetings?'
+                );
+
+                if (!confirmed) return;
+
+                try {
+                    const response = await fetch(
+                        "/api/meetings/" + encodeURIComponent(meetingId),
+                        {
+                            method: "DELETE",
+                            credentials: "same-origin"
+                        }
+                    );
+
+                    const data = await response.json().catch(() => ({}));
+
+                    if (!response.ok) {
+                        throw new Error(data.detail || "Could not delete meeting.");
+                    }
+
+                    alert("Meeting deleted successfully.");
+                    renderMeetings();
+
+                } catch (error) {
+                    console.error("Could not delete meeting:", error);
+                    alert(error.message);
+                }
+            });
+
+            /* Download PDF */
+            const pdfButton = document.createElement("button");
+            pdfButton.className = "meeting-btn";
+            pdfButton.type = "button";
+            pdfButton.textContent = "Download PDF";
+            pdfButton.addEventListener("click", function () {
+                downloadPDF(meeting);
+            });
+
+            /* Download DOC */
+            const docButton = document.createElement("button");
+            docButton.className = "meeting-btn";
+            docButton.type = "button";
+            docButton.textContent = "Download DOC";
+            docButton.addEventListener("click", function () {
+                downloadDOC(meeting);
+            });
+
+            actions.append(
+                openButton,
+                renameButton,
+                deleteButton,
+                pdfButton,
+                docButton
+            );
+
+            cardHeader.append(iconBox, info);
+
+            card.append(cardHeader, actions);
+            meetingsList.appendChild(card);
+        });
+    }
+
+    meetingsSearch.addEventListener("input", renderMeetings);
+    renderMeetings();
+
+    /* Notifications */
+    notificationButton.addEventListener("click", function () {
+        alert("You have no new notifications.");
+    });
+
+    /* Logout confirmation */
+    logoutLink.addEventListener("click", function (event) {
+        const confirmed = confirm("Are you sure you want to log out?");
+
+        if (!confirmed) {
+            event.preventDefault();
+        }
+    });
+});
+</script>
+</body>
+</html>

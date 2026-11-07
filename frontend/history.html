@@ -1,0 +1,1233 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="/static/meetmind-logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f5ff">
+    <title>Meeting History | MEETMIND AI</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="pages.css">
+
+    <style>
+        /* History page */
+        .history-page {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+            color: var(--text, #17182b);
+        }
+
+        .history-heading {
+            margin-bottom: 25px;
+        }
+
+        .history-heading h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+            color: var(--text, #17182b);
+        }
+
+        .history-heading p {
+            margin: 0;
+            color: var(--muted, #6e748d);
+            line-height: 1.6;
+        }
+
+        .history-toolbar {
+            display: flex;
+            gap: 12px;
+            margin: 25px 0;
+        }
+
+        .history-search {
+            flex: 1;
+            min-width: 0;
+            padding: 13px 15px;
+            border: 1px solid var(--border, #dfe3ef);
+            border-radius: 10px;
+            background: var(--white, #fff);
+            color: var(--text, #17182b);
+            font-size: 15px;
+            outline: none;
+        }
+
+        .history-search:focus {
+            border-color: #6850f5;
+        }
+
+        .history-count {
+            margin-bottom: 15px;
+            color: var(--muted, #6e748d);
+            font-size: 14px;
+        }
+
+        .history-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .history-card {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            padding: 22px;
+            border: 1px solid var(--border, #dfe3ef);
+            border-radius: 14px;
+            background: var(--white, #fff);
+            color: var(--text, #17182b);
+            box-shadow: 0 8px 24px rgba(36, 32, 80, 0.04);
+        }
+
+        .history-file-icon {
+            width: 60px;
+            height: 60px;
+            min-width: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .history-file-icon.video {
+            background: #eaf2ff;
+            color: #2478f3;
+        }
+
+        .history-file-icon.audio {
+            background: #e2fbf1;
+            color: #0bb88c;
+        }
+
+        .history-file-icon.document {
+            background: #ffe8ec;
+            color: #ed334f;
+        }
+
+        .history-file-icon svg {
+            width: 28px;
+            height: 28px;
+            display: block;
+        }
+
+        .history-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .history-info h3 {
+            margin: 0 0 9px;
+            font-size: 17px;
+            color: var(--text, #17182b);
+            overflow-wrap: anywhere;
+        }
+
+        .history-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            color: var(--muted, #6e748d);
+            font-size: 13px;
+        }
+
+        .history-actions {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+
+        .history-btn {
+            padding: 9px 13px;
+            border: 1px solid var(--border, #dfe3ef);
+            border-radius: 8px;
+            background: var(--white, #fff);
+            color: var(--text, #17182b);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        .history-btn:hover {
+            border-color: #6850f5;
+            color: #6850f5;
+        }
+
+        .history-btn.primary {
+            background: #6850f5;
+            border-color: #6850f5;
+            color: #fff;
+        }
+
+        .history-btn.primary:hover {
+            background: #5740df;
+            color: #fff;
+        }
+
+        .history-btn.delete {
+            background: #fff0f1;
+            border: 1px solid #ffe0e3;
+            color: #dc3545;
+        }
+
+        .history-btn.delete:hover {
+            background: #ffe0e3;
+            border-color: #dc3545;
+            color: #c82333;
+        }
+
+        .history-empty {
+            padding: 55px 20px;
+            text-align: center;
+            border: 1px dashed var(--border, #dfe3ef);
+            border-radius: 14px;
+            background: var(--white, #fff);
+            color: var(--muted, #6e748d);
+        }
+
+        .history-empty h3 {
+            margin-bottom: 8px;
+            color: var(--text, #17182b);
+        }
+
+        .history-empty a {
+            display: inline-block;
+            margin-top: 12px;
+            color: #6850f5;
+            text-decoration: none;
+        }
+
+        /* Dashboard-compatible top bar */
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .dashboard-theme-toggle {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 1px solid #dfe3ef;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #34354a;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease,
+                border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .dashboard-theme-toggle:hover {
+            border-color: #5935f5;
+            transform: translateY(-1px);
+        }
+
+        .dashboard-theme-toggle svg {
+            display: block;
+            width: 21px;
+            height: 21px;
+        }
+
+        .notification-button {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            background: transparent;
+            color: var(--text, #34354a);
+            cursor: pointer;
+        }
+
+        .notification-button:hover {
+            background: var(--primary-light, #f0edff);
+        }
+
+        .notification-button svg {
+            display: block;
+            width: 21px;
+            height: 21px;
+        }
+
+        .profile-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 6px 10px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text, #17182b);
+            font: inherit;
+            font-size: 13px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .profile-button:hover {
+            background: var(--primary-light, #f0edff);
+        }
+
+        .profile-chevron svg {
+            display: block;
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Dark mode */
+        body.dark-mode .dashboard-theme-toggle {
+            background: #24253c;
+            color: #f1f1fc;
+            border-color: #444661;
+        }
+
+        body.dark-mode .notification-button,
+        body.dark-mode .profile-button {
+            color: #f1f1fc;
+        }
+
+        body.dark-mode .history-heading h1,
+        body.dark-mode .history-info h3,
+        body.dark-mode .history-empty h3 {
+            color: #f1f3ff;
+        }
+
+        body.dark-mode .history-heading p,
+        body.dark-mode .history-meta,
+        body.dark-mode .history-count,
+        body.dark-mode .history-empty p {
+            color: #b7bfd4;
+        }
+
+        body.dark-mode .history-search,
+        body.dark-mode .history-card,
+        body.dark-mode .history-empty {
+            background: #222638;
+            color: #f1f3ff;
+            border-color: #3b4258;
+        }
+
+        body.dark-mode .history-search::placeholder {
+            color: #a8b0c5;
+        }
+
+        body.dark-mode .history-btn {
+            background: #292f43;
+            color: #f1f3ff;
+            border-color: #454c64;
+        }
+
+        body.dark-mode .history-btn:hover {
+            border-color: #8b7aff;
+            color: #c5bcff;
+        }
+
+        body.dark-mode .history-btn.primary,
+        body.dark-mode .history-btn.primary:hover {
+            background: #6850f5;
+            color: #fff;
+            border-color: #6850f5;
+        }
+
+        body.dark-mode .history-btn.delete {
+            background: #482b35;
+            color: #ff8b9a;
+            border-color: #65404b;
+        }
+
+        body.dark-mode .history-btn.delete:hover {
+            background: #5a303d;
+            color: #ffb0ba;
+            border-color: #ff6b81;
+        }
+
+        .dashboard-theme-toggle:focus-visible,
+        .notification-button:focus-visible,
+        .history-btn:focus-visible {
+            outline: 3px solid #bcb0ff;
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 900px) {
+            .history-card {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .history-actions {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .history-page {
+                padding: 20px 14px;
+            }
+
+            .history-heading h1 {
+                font-size: 25px;
+            }
+
+            .history-toolbar {
+                flex-direction: column;
+            }
+
+            .history-card {
+                padding: 17px;
+            }
+
+            .history-actions {
+                gap: 7px;
+            }
+
+            .history-btn {
+                flex: 1;
+            }
+
+            .topbar-actions {
+                gap: 6px;
+            }
+
+            .profile-button > span:not(.avatar):not(.profile-chevron) {
+                display: none;
+            }
+        }
+        .history-filter {
+            min-width: 130px;
+            padding: 12px 14px;
+            border: 1px solid var(--border, #dfe3ef);
+            border-radius: 10px;
+            background: var(--white, #fff);
+            color: var(--text, #17182b);
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .history-filter:focus {
+            border-color: #6850f5;
+        }
+
+        body.dark-mode .history-filter {
+            background: #222638;
+            color: #f1f3ff;
+            border-color: #3b4258;
+        }
+    </style>
+</head>
+
+<body>
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <a href="/home" class="brand">
+            <h2>MEETMIND <span>AI</span></h2>
+            <p>AI Meeting Intelligence System</p>
+        </a>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <a href="/home" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="4" width="6" height="6" rx="1"/>
+                        <rect x="14" y="4" width="6" height="6" rx="1"/>
+                        <rect x="4" y="14" width="6" height="6" rx="1"/>
+                        <rect x="14" y="14" width="6" height="6" rx="1"/>
+                    </svg>
+                </span>
+                Home
+            </a>
+
+            <a href="/static/meetings.html" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="5" width="13" height="14" rx="2"/>
+                        <path d="m16 10 5-3v10l-5-3z"/>
+                    </svg>
+                </span>
+                Meetings
+            </a>
+
+            <a href="/static/history.html" class="nav-link active" aria-current="page">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/>
+                        <path d="M3 3v5h5"/>
+                        <path d="M12 7v5l3 2"/>
+                    </svg>
+                </span>
+                View History
+            </a>
+
+            
+            <a href="/static/about.html" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="M12 11v5"/>
+                        <path d="M12 7h.01"/>
+                    </svg>
+                </span>
+             About
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/static/settings.html" class="nav-link">
+                <span class="nav-icon" aria-hidden="true">
+                    <!-- Optimized settings gear -->
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="22" height="22"
+                         viewBox="0 0 50 50"
+                         fill="currentColor"
+                         aria-hidden="true">
+                        <path d="M 22.19 2 A 1.00 1.00 0 0 0 21.21 2.83 L 20.20 8.79 C 19.01 9.14 17.90 9.60 16.83 10.17 L 11.87 6.68 A 1.00 1.00 0 0 0 10.59 6.79 L 6.69 10.69 A 1.00 1.00 0 0 0 6.58 11.97 L 10.07 16.93 C 9.50 17.98 9.04 19.10 8.69 20.29 L 2.84 21.21 A 1.00 1.00 0 0 0 2 22.19 L 2 27.69 A 1.00 1.00 0 0 0 2.83 28.68 L 8.79 29.69 C 9.14 30.88 9.60 31.99 10.16 33.05 L 6.68 37.91 A 1.00 1.00 0 0 0 6.79 39.20 L 10.69 43.10 A 1.00 1.00 0 0 0 11.97 43.21 L 16.93 39.72 C 17.98 40.29 19.11 40.75 20.30 41.10 L 21.31 47.06 A 1.00 1.00 0 0 0 22.30 47.90 L 27.80 47.90 A 1.00 1.00 0 0 0 28.78 47.08 L 29.88 41.10 C 31.07 40.75 32.19 40.29 33.26 39.72 L 38.22 43.21 A 1.00 1.00 0 0 0 39.50 43.10 L 43.40 39.20 A 1.00 1.00 0 0 0 43.50 37.91 L 39.93 32.95 C 40.50 31.91 40.95 30.82 41.30 29.69 L 47.16 28.68 A 1.00 1.00 0 0 0 48 27.69 L 48 22.19 A 1.00 1.00 0 0 0 47.16 21.21 L 41.19 20.20 C 40.85 19.07 40.39 17.97 39.82 16.93 L 43.31 11.97 A 1.00 1.00 0 0 0 43.20 10.69 L 39.30 6.79 A 1.00 1.00 0 0 0 38.01 6.68 L 33.05 10.27 C 32.00 9.70 30.88 9.24 29.69 8.89 L 28.68 2.83 A 1.00 1.00 0 0 0 27.69 2 L 22.19 2 z M 23.04 4 L 26.85 4 L 27.81 9.76 A 1.00 1.00 0 0 0 28.55 10.57 C 30.07 10.94 31.47 11.51 32.67 12.25 A 1.00 1.00 0 0 0 33.78 12.21 L 38.49 8.80 L 41.19 11.51 L 37.88 16.22 A 1.00 1.00 0 0 0 37.84 17.32 C 38.58 18.52 39.15 19.93 39.53 21.35 A 1.00 1.00 0 0 0 40.33 22.08 L 46 23.04 L 46 26.85 L 40.42 27.81 A 1.00 1.00 0 0 0 39.63 28.54 C 39.25 29.96 38.68 31.37 37.94 32.57 A 1.00 1.00 0 0 0 37.99 33.68 L 41.39 38.39 L 38.68 41.09 L 33.97 37.78 A 1.00 1.00 0 0 0 32.90 37.73 C 31.56 38.49 30.26 39.05 28.75 39.42 A 1.00 1.00 0 0 0 28.01 40.21 L 26.96 45.90 L 23.14 45.90 L 22.18 40.23 A 1.00 1.00 0 0 0 21.44 39.42 C 19.92 39.05 18.52 38.48 17.32 37.74 A 1.00 1.00 0 0 0 16.22 37.78 L 11.51 41.09 L 8.80 38.39 L 12.11 33.78 A 1.00 1.00 0 0 0 12.16 32.70 C 11.40 31.36 10.84 30.06 10.47 28.55 A 1.00 1.00 0 0 0 9.66 27.81 L 4 26.85 L 4 23.05 L 9.55 22.18 A 1.00 1.00 0 0 0 10.37 21.44 C 10.74 19.92 11.31 18.52 12.05 17.32 A 1.00 1.00 0 0 0 12.01 16.22 L 8.70 11.51 L 11.41 8.80 L 16.12 12.11 A 1.00 1.00 0 0 0 17.19 12.16 C 18.53 11.40 19.83 10.84 21.34 10.47 A 1.00 1.00 0 0 0 22.08 9.66 L 23.04 4 z M 25 17 C 20.57 17 17 20.57 17 25 C 17 29.42 20.57 33 25 33 C 29.42 33 33 29.42 33 25 C 33 20.57 29.42 17 25 17 z M 25 19 C 28.37 19 31 21.62 31 25 C 31 28.37 28.37 31 25 31 C 21.62 31 19 28.37 19 25 z"/>
+                    </svg>
+                </span>
+                Settings
+            </a>
+
+            <a href="/" class="nav-link" id="logoutLink">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 17l5-5-5-5"/>
+                        <path d="M15 12H3"/>
+                        <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/>
+                    </svg>
+                </span>
+                Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-area">
+
+        <header class="topbar">
+            <div>
+            </div>
+
+            <div class="topbar-actions">
+                <!-- Dashboard-style theme toggle -->
+                <button
+                    type="button"
+                    id="themeToggle"
+                    class="dashboard-theme-toggle"
+                    aria-label="Switch to dark mode"
+                    aria-pressed="false"
+                    title="Switch theme">
+                    <span id="themeToggleIcon" aria-hidden="true"></span>
+                </button>
+
+                <!-- Dashboard-style notification bell -->
+                <button
+                    type="button"
+                    id="notificationButton"
+                    class="notification-button"
+                    aria-label="Notifications"
+                    title="Notifications">
+                    <span class="topbar-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                            <path d="M10 21h4"/>
+                        </svg>
+                    </span>
+                    <span class="notification"></span>
+                </button>
+
+                <!-- Dashboard-style workspace profile -->
+                <a href="settings.html" class="profile-button">
+                    <span class="avatar" id="headerAvatar">S</span>
+                    <span id="headerProfileName">My Workspace</span>
+                    <span class="profile-chevron" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6"/>
+                        </svg>
+                    </span>
+                </a>
+            </div>
+        </header>
+
+        <!-- HISTORY SECTION -->
+        <section class="history-page">
+            <div class="history-heading">
+                <h1>Meeting History</h1>
+                <p>Find, manage, and reopen your previous meetings.</p>
+            </div>
+
+            <div class="history-toolbar">
+                <input
+                    type="search"
+                    id="historySearch"
+                    class="history-search"
+                    placeholder="Search meetings by name or type..."
+                    aria-label="Search meeting history">
+
+                <select id="historyTypeFilter" class="history-filter"
+                        aria-label="Filter by meeting type">
+                    <option value="all">All Types</option>
+                    <option value="video">Video</option>
+                    <option value="audio">Audio</option>
+                    <option value="document">Documents</option>
+                </select>
+
+                <select id="historySortOrder" class="history-filter"
+                        aria-label="Sort meeting history">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                </select>
+            </div>
+
+            <div id="historyCount" class="history-count">
+                Loading meetings...
+            </div>
+
+            <div id="historyList" class="history-list"></div>
+
+            <div id="historyEmpty" class="history-empty" style="display: none;">
+                <h3 id="emptyTitle">No meeting history yet</h3>
+                <p id="emptyMessage">Your saved meetings will appear here.</p>
+                <a href="/home">+ Analyze a meeting</a>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="app-common.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    "use strict";
+
+    const historyList = document.getElementById("historyList");
+    const historySearch = document.getElementById("historySearch");
+    const historyTypeFilter = document.getElementById("historyTypeFilter");
+    const historySortOrder = document.getElementById("historySortOrder");
+    const historyCount = document.getElementById("historyCount");
+    const historyEmpty = document.getElementById("historyEmpty");
+    const emptyTitle = document.getElementById("emptyTitle");
+    const emptyMessage = document.getElementById("emptyMessage");
+    const themeToggle = document.getElementById("themeToggle");
+    const themeToggleIcon = document.getElementById("themeToggleIcon");
+    const notificationButton = document.getElementById("notificationButton");
+    const logoutLink = document.getElementById("logoutLink");
+
+    const THEME_KEY = "meetmind-auth-theme";
+    const LEGACY_THEME_KEY = "meetingAITheme";
+
+    /* Theme shared with the dashboard */
+    function readTheme() {
+        try {
+            return localStorage.getItem(THEME_KEY) ||
+                localStorage.getItem(LEGACY_THEME_KEY) ||
+                "light";
+        } catch (error) {
+            return "light";
+        }
+    }
+
+    function applyTheme(isDark) {
+        document.body.classList.toggle("dark-mode", isDark);
+        document.documentElement.classList.toggle("dark-mode", isDark);
+
+        themeToggleIcon.innerHTML = isDark
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>'
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2z"/></svg>';
+
+        const label = isDark ? "Switch to light mode" : "Switch to dark mode";
+
+        themeToggle.setAttribute("aria-label", label);
+        themeToggle.setAttribute("title", label);
+        themeToggle.setAttribute("aria-pressed", String(isDark));
+
+        try {
+            localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
+            localStorage.setItem(LEGACY_THEME_KEY, isDark ? "dark" : "light");
+        } catch (error) {
+            console.warn("Could not save the theme preference.", error);
+        }
+    }
+
+    applyTheme(readTheme() === "dark");
+
+    themeToggle.addEventListener("click", function () {
+        applyTheme(!document.body.classList.contains("dark-mode"));
+    });
+
+    /* Read meetings using the existing storage system */
+    function readMeetings() {
+        try {
+            if (
+                window.MeetMind &&
+                typeof window.MeetMind.readMeetings === "function"
+            ) {
+                const result = window.MeetMind.readMeetings();
+
+                if (Array.isArray(result)) {
+                    return result;
+                }
+            }
+
+            const saved = localStorage.getItem("meetMindMeetings");
+            const meetings = saved ? JSON.parse(saved) : [];
+
+            return Array.isArray(meetings) ? meetings : [];
+        } catch (error) {
+            console.error("Could not read meetings:", error);
+            return [];
+        }
+    }
+
+    function writeMeetings(meetings) {
+        if (
+            window.MeetMind &&
+            typeof window.MeetMind.writeMeetings === "function"
+        ) {
+            window.MeetMind.writeMeetings(meetings);
+            return;
+        }
+
+        localStorage.setItem("meetMindMeetings", JSON.stringify(meetings));
+    }
+
+    function getMeetingName(meeting) {
+        return (
+            meeting.name ||
+            meeting.meetingName ||
+            meeting.fileName ||
+            meeting.title ||
+            meeting.url ||
+            "Untitled Meeting"
+        );
+    }
+
+    function getMeetingDate(meeting) {
+        const rawDate =
+            meeting.date ||
+            meeting.createdAt ||
+            meeting.timestamp;
+
+        if (!rawDate) {
+            return "Date unavailable";
+        }
+
+        const date = new Date(rawDate);
+
+        return Number.isNaN(date.getTime())
+            ? String(rawDate)
+            : date.toLocaleString();
+    }
+
+    function getMeetingType(meeting) {
+        if (meeting.type) {
+            return String(meeting.type).toUpperCase();
+        }
+
+        const source = meeting.fileName || meeting.name || "";
+        const extension = source.includes(".")
+            ? source.split(".").pop().toUpperCase()
+            : "";
+
+        return extension || (meeting.url ? "URL" : "MEETING");
+    }
+    function getMeetingCategory(meeting) {
+        const type = getMeetingType(meeting).toLowerCase();
+
+        if (["video", "mp4", "mov", "avi", "mkv", "webm", "mpeg"].includes(type)) {
+            return "video";
+        }
+
+        if (["audio", "mp3", "wav", "m4a", "aac", "ogg", "flac"].includes(type)) {
+            return "audio";
+        }
+
+        if (["document", "pdf", "doc", "docx", "txt", "ppt", "pptx", "xls", "xlsx"].includes(type)) {
+            return "document";
+        }
+
+        const name = getMeetingName(meeting).toLowerCase();
+
+        if (/\.(mp4|mov|avi|mkv|webm|mpeg)$/i.test(name)) {
+            return "video";
+        }
+
+        if (/\.(mp3|wav|m4a|aac|ogg|flac)$/i.test(name)) {
+            return "audio";
+        }
+
+        if (/\.(pdf|doc|docx|txt|ppt|pptx|xls|xlsx)$/i.test(name)) {
+            return "document";
+        }
+
+        return "other";
+    }
+
+    
+
+
+    function getHistoryFileIcon(meeting) {
+        const category = getMeetingCategory(meeting);
+
+        const icons = {
+            video: `
+                <svg viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="5" width="13" height="14" rx="2"/>
+                    <path d="m16 10 5-3v10l-5-3z"/>
+                </svg>
+            `,
+            audio: `
+                <svg viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3v18"/>
+                    <path d="M8 7v10"/>
+                    <path d="M4 10v4"/>
+                    <path d="M16 6v12"/>
+                    <path d="M20 9v6"/>
+                </svg>
+            `,
+            document: `
+                <svg viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <path d="M14 2v6h6"/>
+                    <path d="M8 13h8M8 17h8"/>
+                </svg>
+            `
+        };
+
+        return {
+            category,
+            icon: icons[category] || icons.document
+        };
+    }
+
+    /* Export helpers */
+    function safeFilename(name) {
+        return name
+            .replace(/[<>:"/\\|?*\x00-\x1F]/g, "_")
+            .replace(/\s+/g, "_")
+            .slice(0, 100) || "meeting";
+    }
+
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, function (character) {
+            const entities = {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            };
+
+            return entities[character];
+        });
+    }
+
+    async function downloadPDF(meeting) {
+        const meetingId = meeting.id;
+
+        try {
+            const response = await fetch(
+                "/api/meetings/" + encodeURIComponent(meetingId) + "/report/pdf",
+                {
+                    method: "GET",
+                    credentials: "same-origin"
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+
+                throw new Error(
+                    errorData.detail || "Could not download the PDF."
+                );
+            }
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = safeFilename(getMeetingName(meeting)) + ".pdf";
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            URL.revokeObjectURL(url);
+
+        } catch (error) {
+            console.error("PDF download failed:", error);
+            alert(error.message);
+        }
+    }
+
+    async function downloadDOC(meeting) {
+        const meetingId = meeting.id;
+
+        try {
+            const response = await fetch(
+                "/api/meetings/" + encodeURIComponent(meetingId) + "/report/docx",
+                {
+                    method: "GET",
+                    credentials: "same-origin"
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+
+                throw new Error(
+                    errorData.detail || "Could not download the Word document."
+                );
+            }
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = safeFilename(getMeetingName(meeting)) + ".docx";
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            URL.revokeObjectURL(url);
+
+        } catch (error) {
+            console.error("DOC download failed:", error);
+            alert(error.message);
+        }
+    }
+
+    /* Render history */
+    async function renderHistory() {
+        const searchText = historySearch.value.trim().toLowerCase();
+
+        historyList.innerHTML = "";
+        historyCount.textContent = "Loading meetings...";
+        historyEmpty.style.display = "none";
+
+        try {
+            const response = await fetch("/api/meetings", {
+                method: "GET",
+                credentials: "same-origin"
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(
+                    data.detail || "Could not load meeting history."
+                );
+            }
+
+            const meetings = (data.meetings || []).map(item => ({
+                id: item.meeting_id,
+                name: item.filename,
+                fileName: item.filename,
+                createdAt: item.created_at,
+                type: item.filename.split(".").pop().toUpperCase(),
+                duration: item.duration,
+                status: item.status
+            }));
+
+            const selectedType = historyTypeFilter.value;
+            const sortOrder = historySortOrder.value;
+
+            const filteredMeetings = meetings.filter(function (meeting) {
+                const matchesSearch =
+                    getMeetingName(meeting).toLowerCase().includes(searchText) ||
+                    getMeetingType(meeting).toLowerCase().includes(searchText);
+
+                const matchesType =
+                    selectedType === "all" ||
+                    getMeetingCategory(meeting) === selectedType;
+
+                return matchesSearch && matchesType;
+            });
+
+            filteredMeetings.sort(function (a, b) {
+                const dateA = new Date(
+                    a.date || a.createdAt || a.timestamp || 0
+                ).getTime();
+
+                const dateB = new Date(
+                    b.date || b.createdAt || b.timestamp || 0
+                ).getTime();
+
+                const validA = Number.isNaN(dateA) ? 0 : dateA;
+                const validB = Number.isNaN(dateB) ? 0 : dateB;
+
+                return sortOrder === "oldest"
+                    ? validA - validB
+                    : validB - validA;
+            });
+
+            historyCount.textContent =
+                filteredMeetings.length +
+                (filteredMeetings.length === 1
+                    ? " meeting found"
+                    : " meetings found");
+
+            if (filteredMeetings.length === 0) {
+                historyEmpty.style.display = "block";
+
+                emptyTitle.textContent = meetings.length === 0
+                    ? "No meeting history yet"
+                    : "No matching meetings";
+
+                emptyMessage.textContent = meetings.length === 0
+                    ? "Analyze a meeting from your dashboard to see it here."
+                    : "Try a different search term.";
+
+                return;
+            }
+
+            historyEmpty.style.display = "none";
+
+            // Keep the existing meeting-card rendering code here.
+            // We will update its actions in the next steps.
+
+            filteredMeetings.forEach(function (meeting) {
+                const meetingId = String(meeting.id || "");
+
+                // Create meeting card
+                const card = document.createElement("article");
+                card.className = "history-card";
+
+
+
+                // File type icon
+                const visual = getHistoryFileIcon(meeting);
+
+                const iconBox = document.createElement("div");
+                iconBox.className = "history-file-icon " + visual.category;
+                iconBox.innerHTML = visual.icon;
+
+                // Meeting information
+                const info = document.createElement("div");
+                info.className = "history-info";
+
+                const title = document.createElement("h3");
+                title.textContent = getMeetingName(meeting);
+
+                const meta = document.createElement("div");
+                meta.className = "history-meta";
+
+                const type = document.createElement("span");
+                type.textContent = "Type: " + getMeetingType(meeting);
+
+                const date = document.createElement("span");
+                date.textContent = getMeetingDate(meeting);
+
+                meta.append(type, date);
+                info.append(title, meta);
+
+                // Meeting actions
+                const actions = document.createElement("div");
+                actions.className = "history-actions";
+
+                // Open button
+                const openButton = document.createElement("button");
+                openButton.className = "history-btn primary";
+                openButton.textContent = "Open";
+                openButton.type = "button";
+
+                openButton.addEventListener("click", function () {
+                    if (!meetingId) {
+                        alert("This meeting has no ID.");
+                        return;
+                    } 
+
+                    window.location.href =
+                        "analysis.html?id=" + encodeURIComponent(meetingId);
+                });
+
+                // Rename button
+                const renameButton = document.createElement("button");
+                renameButton.className = "history-btn";
+                renameButton.textContent = "Rename";
+                renameButton.type = "button";
+
+                renameButton.addEventListener("click", async function () {
+                    const newName = prompt(
+                        "Enter a new meeting name:",
+                        getMeetingName(meeting)
+                    );
+
+                    if (newName === null) return;
+
+                    if (!newName.trim()) {
+                        alert("Meeting name cannot be empty.");
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(
+                            "/api/meetings/" + encodeURIComponent(meetingId) + "/rename",
+                            {
+                                method: "PATCH",
+                                credentials: "same-origin",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    filename: newName.trim()
+                                })
+                            }
+                        );
+
+                        const data = await response.json().catch(() => ({}));
+
+                        if (!response.ok) {
+                            throw new Error(data.detail || "Could not rename meeting.");
+                        }
+
+                        alert("Meeting renamed successfully.");
+                        renderHistory();
+
+                    } catch (error) {
+                        alert(error.message);
+                    }
+                });
+
+                // Delete button
+                const deleteButton = document.createElement("button");
+                deleteButton.className = "history-btn delete";
+                deleteButton.textContent = "Delete";
+                deleteButton.type = "button";
+
+                deleteButton.addEventListener("click", async function () {
+                    const confirmed = confirm(
+                        'Delete "' + getMeetingName(meeting) + '" from your saved meetings?'
+                    );
+
+                    if (!confirmed) return;
+
+                    try {
+                        const response = await fetch(
+                            "/api/meetings/" + encodeURIComponent(meetingId),
+                            {
+                                method: "DELETE",
+                                credentials: "same-origin"
+                            }
+                        );
+
+                        const data = await response.json().catch(() => ({}));
+
+                        if (!response.ok) {
+                            throw new Error(data.detail || "Could not delete meeting.");
+                        }
+
+                        alert("Meeting deleted successfully.");
+                        renderHistory();
+
+                    } catch (error) {
+                        alert(error.message);
+                    }
+                });
+
+                // Download PDF button
+                const pdfButton = document.createElement("button");
+                pdfButton.className = "history-btn";
+                pdfButton.textContent = "Download PDF";
+                pdfButton.type = "button";
+                pdfButton.addEventListener("click", function () {
+                    downloadPDF(meeting);
+                });
+
+                // Download DOC button
+                const docButton = document.createElement("button");
+                docButton.className = "history-btn";
+                docButton.textContent = "Download DOC";
+                docButton.type = "button";
+                docButton.addEventListener("click", function () {
+                    downloadDOC(meeting);
+                });
+
+                // Add all buttons
+                actions.append(
+                    openButton,
+                    renameButton,
+                    deleteButton,
+                    pdfButton,
+                    docButton
+                );
+                card.append(iconBox, info, actions);
+                historyList.appendChild(card);
+            });
+
+        } catch (error) {
+            console.error("Could not load meeting history:", error);
+
+            historyCount.textContent = "Unable to load meetings.";
+
+            historyEmpty.style.display = "block";
+            emptyTitle.textContent = "Could not load meeting history";
+            emptyMessage.textContent = error.message;
+        }
+    }
+
+    historySearch.addEventListener("input", renderHistory);
+    historyTypeFilter.addEventListener("change", renderHistory);
+    historySortOrder.addEventListener("change", renderHistory);
+
+    notificationButton.addEventListener("click", function () {
+        alert("You have no new notifications.");
+    });
+
+    logoutLink.addEventListener("click", function (event) {
+        const confirmed = confirm("Are you sure you want to log out?");
+
+        if (!confirmed) {
+            event.preventDefault();
+        }
+    });
+
+    renderHistory();
+});
+</script>
+
+</body>
+</html>

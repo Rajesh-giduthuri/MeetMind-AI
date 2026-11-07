@@ -1,0 +1,337 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="/static/meetmind-logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f5ff">
+    <meta name="description" content="Sign in to your MEETMIND AI workspace.">
+
+    <title>Login | MEETMIND AI</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        /* Theme toggle button */
+        .auth-card {
+            position: relative;
+        }
+
+        .auth-theme-toggle {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            z-index: 10;
+
+            width: 42px;
+            height: 42px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0;
+            border: 1px solid #dfe3ef;
+            border-radius: 12px;
+
+            background: rgba(255, 255, 255, 0.9);
+            color: #34354a;
+
+            cursor: pointer;
+            transition: background 0.2s ease,
+                        color 0.2s ease,
+                        border-color 0.2s ease,
+                        transform 0.2s ease;
+        }
+
+        .auth-theme-toggle:hover {
+            transform: translateY(-2px);
+            border-color: #5935f5;
+        }
+
+        .auth-theme-toggle:focus-visible {
+            outline: 3px solid #bcb0ff;
+            outline-offset: 3px;
+        }
+
+        .auth-theme-toggle svg {
+            display: block;
+            width: 22px;
+            height: 22px;
+        }
+
+        /* Toggle button in dark mode */
+        body.auth-dark .auth-theme-toggle {
+            background: #24253c;
+            color: #f1f1fc;
+            border-color: #444661;
+        }
+
+        @media (max-width: 480px) {
+            .auth-theme-toggle {
+                top: 12px;
+                right: 12px;
+                width: 38px;
+                height: 38px;
+            }
+        }
+    </style>
+</head>
+
+<body class="auth-page login-page">
+
+    <main class="auth-screen">
+
+        <section class="auth-card" aria-labelledby="loginTitle">
+
+            <!-- Theme Toggle -->
+            <button
+                type="button"
+                id="authThemeToggle"
+                class="auth-theme-toggle"
+                aria-label="Switch to dark mode"
+                aria-pressed="false"
+                title="Switch to dark mode"
+            >
+                <span id="authThemeIcon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5
+                                 8.5 8.5 0 1 0 20.5 14.5Z"/>
+                    </svg>
+                </span>
+            </button>
+
+            <!-- Brand and Heading -->
+            <header class="auth-header">
+
+                <a href="/auth"
+                   class="auth-brand"
+                   aria-label="MeetMind AI home">
+
+                    <h1 class="brand-title">
+                        MEETMIND <span>AI</span>
+                    </h1>
+
+                    <p class="brand-subtitle">
+                        AI Meeting Intelligence System
+                    </p>
+
+                </a>
+
+                <h2 id="loginTitle">Welcome back!</h2>
+
+                <p class="welcome-description">
+                    Sign in to continue to your workspace.
+                </p>
+
+            </header>
+
+            <!-- Google Sign In -->
+            <button type="button" class="google-button" id="googleLogin">
+
+                <svg
+                    class="google-icon"
+                    viewBox="0 0 48 48"
+                    aria-hidden="true"
+                    focusable="false"
+                >
+                    <path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.6c3.9-3.6 6.1-8.9 6.1-15z"/>
+                    <path fill="#34A853" d="M24 44c5.5 0 10.1-1.8 13.5-4.9l-6.6-5.1c-1.8 1.2-4.1 2-6.9 2-5.3 0-9.8-3.6-11.4-8.4H5.8v5.3A20.4 20.4 0 0 0 24 44z"/>
+                    <path fill="#FBBC05" d="M12.6 27.6a12.3 12.3 0 0 1 0-7.2v-5.3H5.8a20.4 20.4 0 0 0 0 17.8l6.8-5.3z"/>
+                    <path fill="#EA4335" d="M24 12.1c3 0 5.7 1 7.8 3.1l5.8-5.8C34.1 6.1 29.5 4 24 4A20.4 20.4 0 0 0 5.8 15.1l6.8 5.3C14.2 15.7 18.7 12.1 24 12.1z"/>
+                </svg>
+
+                <span>Continue with Google</span>
+
+            </button>
+
+            <div class="auth-divider">
+                <span>OR</span>
+            </div>
+
+            <!-- Email or Username Login -->
+            <form id="loginForm">
+
+                <div class="form-group">
+
+                    <label for="username">Email or Username</label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your email or username"
+                        autocomplete="username"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="password">Password</label>
+
+                    <div class="password-wrapper">
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            id="togglePassword"
+                            class="password-toggle"
+                            aria-controls="password"
+                            aria-label="Show password"
+                        >
+                            Show
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="login-options">
+
+                    <label class="remember-option" for="rememberMe">
+
+                        <input
+                            type="checkbox"
+                            id="rememberMe"
+                            name="rememberMe"
+                        >
+
+                        <span>Remember me</span>
+
+                    </label>
+
+                    <a href="#" id="forgotPassword">
+                        Forgot password?
+                    </a>
+
+                </div>
+
+                <p
+                    id="loginMessage"
+                    class="form-message"
+                    role="status"
+                    aria-live="polite"
+                ></p>
+
+                <button type="submit" class="primary-button">
+                    Login <span aria-hidden="true">→</span>
+                </button>
+
+            </form>
+
+            <!-- Signup Link -->
+            <p class="signup-prompt">
+                Don't have an account?
+                <a href="/static/signup.html">Create account</a>
+            </p>
+
+            <!-- Home Link -->
+            <p class="auth-home-link">
+                <a href="index.html">← Back to home</a>
+            </p>
+
+        </section>
+
+        <p class="auth-footer">
+            © 2026 MEETMIND AI. All rights reserved.
+        </p>
+
+    </main>
+
+    <script src="/static/script.js"></script>
+
+    <!-- Login Page Theme Toggle -->
+    
+<script>
+(function () {
+    "use strict";
+
+    const toggle = document.getElementById("authThemeToggle");
+    const icon = document.getElementById("authThemeIcon");
+
+    if (!toggle || !icon) {
+        console.error("Theme toggle button or icon was not found.");
+        return;
+    }
+
+    const THEME_KEY = "meetmind-auth-theme";
+
+    const moon = `
+        <svg viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5
+                     8.5 8.5 0 1 0 20.5 14.5Z"/>
+        </svg>`;
+
+    const sun = `
+        <svg viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42
+                     m11.3 11.3 1.42 1.42M2 12h2m16 0h2
+                     M4.93 19.07l1.42-1.42
+                     m11.3-11.3 1.42-1.42"/>
+        </svg>`;
+
+    function readTheme() {
+        try {
+            const saved = localStorage.getItem(THEME_KEY);
+            if (saved === "dark" || saved === "light") return saved;
+
+            const legacy = localStorage.getItem("meetingAITheme");
+            if (legacy === "dark" || legacy === "light") return legacy;
+        } catch (error) {
+            console.warn("Could not read saved theme:", error);
+        }
+
+        return "light";
+    }
+
+    function applyTheme(theme) {
+        const dark = theme === "dark";
+
+        document.body.classList.toggle("auth-dark", dark);
+        document.documentElement.classList.toggle("auth-dark", dark);
+
+        icon.innerHTML = dark ? sun : moon;
+
+        const label = dark ? "Switch to light mode" : "Switch to dark mode";
+        toggle.setAttribute("aria-label", label);
+        toggle.setAttribute("title", label);
+        toggle.setAttribute("aria-pressed", String(dark));
+
+        try {
+            localStorage.setItem(THEME_KEY, theme);
+            localStorage.setItem("meetingAITheme", theme);
+        } catch (error) {
+            console.warn("Could not save theme:", error);
+        }
+    }
+
+    applyTheme(readTheme());
+
+    toggle.addEventListener("click", function () {
+        const dark = document.body.classList.contains("auth-dark");
+        applyTheme(dark ? "light" : "dark");
+    });
+})();
+</script>
+
+
+</body>
+</html>
