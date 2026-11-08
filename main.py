@@ -3,6 +3,9 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+
+load_dotenv()
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi import Request
@@ -16,10 +19,7 @@ from summary_service import generate_summary
 from routers.auth import router as auth_router
 from routers.meetings import router as meetings_router
 from routers.qa import router as qa_router
-
 from routers.summary import router as summary_router
-
-load_dotenv()
 
 app = FastAPI(
     title="MeetMind AI",

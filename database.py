@@ -1,5 +1,7 @@
 
+import os
 from pathlib import Path
+from datetime import datetime, timezone
 
 from sqlalchemy import (
     Column,
@@ -11,18 +13,46 @@ from sqlalchemy import (
     String,
     Text,
     create_engine,
+    inspect,
+    text,
 )
-from sqlalchemy.orm import declarative_base, relationship, sessionmaker
-from datetime import datetime, timezone
+from sqlalchemy.engine import make_url
+from sqlalchemy.orm import declarative_base, sessionmaker
+
+
+# DATABASE CONFIGURATION
 
 DATABASE_DIR = Path("data")
-DATABASE_DIR.mkdir(parents=True, exist_ok=True)
 
-DATABASE_URL = "sqlite:///./data/meetings.db"
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "sqlite:///./data/meetings.db",
+)
+
+db_url = make_url(DATABASE_URL)
+
+connect_args = {}
+
+if db_url.get_backend_name() == "sqlite":
+    DATABASE_DIR.mkdir(parents=True, exist_ok=True)
+    connect_args = {"check_same_thread": False}
+
+else:
+    if db_url.drivername in ("postgresql", "postgres"):
+        db_url = db_url.set(
+            drivername="postgresql+psycopg"
+        )
+
+    if "sslmode" not in db_url.query:
+        db_url = db_url.update_query_dict(
+            {"sslmode": "require"}
+        )
+
 
 engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False},
+    db_url,
+    connect_args=connect_args,
+    pool_pre_ping=True,
 )
 
 SessionLocal = sessionmaker(
@@ -32,6 +62,9 @@ SessionLocal = sessionmaker(
 )
 
 Base = declarative_base()
+
+
+# USER MODEL
 
 class User(Base):
     __tablename__ = "users"
@@ -47,14 +80,18 @@ class User(Base):
         nullable=False,
     )
 
+
+# MEETING MODEL
+
 class Meeting(Base):
     __tablename__ = "meetings"
+
     user_id = Column(
-    Integer,
-    ForeignKey("users.id"),
-    nullable=True,
-    index=True,
-)
+        Integer,
+        ForeignKey("users.id"),
+        nullable=True,
+        index=True,
+    )
 
     id = Column(String, primary_key=True, index=True)
     filename = Column(String, nullable=False)
@@ -64,6 +101,7 @@ class Meeting(Base):
     transcript_segments = Column(JSON, nullable=True)
     summary = Column(JSON, nullable=True)
     status = Column(String, default="uploaded", nullable=False)
+
     created_at = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
@@ -71,18 +109,23 @@ class Meeting(Base):
     )
 
 
+# MEETING QUESTION MODEL
+
 class MeetingQuestion(Base):
     __tablename__ = "meeting_questions"
 
     id = Column(Integer, primary_key=True, index=True)
+
     meeting_id = Column(
         String,
         ForeignKey("meetings.id"),
         nullable=False,
         index=True,
     )
+
     question = Column(Text, nullable=False)
     answer = Column(Text, nullable=False)
+
     created_at = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
@@ -90,13 +133,13 @@ class MeetingQuestion(Base):
     )
 
 
+# DATABASE INITIALIZATION
 
 def init_db():
     Base.metadata.create_all(bind=engine)
 
-    from sqlalchemy import inspect, text
-
     inspector = inspect(engine)
+
     meeting_columns = {
         column["name"]
         for column in inspector.get_columns("meetings")
@@ -112,4 +155,3 @@ def init_db():
             )
 
         print("Added user_id column to meetings table.")
-

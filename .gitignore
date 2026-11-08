@@ -20,3 +20,8 @@ outputs/
 # Editor and test files
 .vscode/
 .pytest_cache/
+
+# Logs and coverage
+*.log
+.coverage
+htmlcov/

@@ -18,10 +18,13 @@ from transcription_service import (
     transcribe_question_audio,
     download_google_drive_video,
 )
+import mimetypes
 from document_service import extract_document_text
 from summary_service import generate_summary
 from report_service import generate_pdf_report, generate_docx_report
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, Response
+from sqlalchemy import text
+from media_storage import store_media_file, iter_media_chunks
 
 router = APIRouter(prefix="/api/meetings", tags=["Meetings"])
 
@@ -29,6 +32,66 @@ def get_user_upload_dir(user_id: int) -> Path:
     user_upload_dir = Path("uploads") / f"user_{user_id}"
     user_upload_dir.mkdir(parents=True, exist_ok=True)
     return user_upload_dir
+
+def get_aiven_media_metadata(db, meeting_id: str):
+    return db.execute(
+        text("""
+            SELECT
+                original_filename,
+                content_type,
+                file_size,
+                sha256
+            FROM meeting_media
+            WHERE meeting_id = :meeting_id
+        """),
+        {"meeting_id": meeting_id},
+    ).mappings().first()
+
+
+def parse_media_range(range_header: str, file_size: int):
+    """Parse a single HTTP byte range."""
+
+    if not range_header:
+        return 0, file_size - 1, False
+
+    if not range_header.startswith("bytes=") or file_size <= 0:
+        raise HTTPException(status_code=416, detail="Invalid media range.")
+
+    value = range_header[6:].strip()
+
+    if "," in value or "-" not in value:
+        raise HTTPException(status_code=416, detail="Invalid media range.")
+
+    start_text, end_text = value.split("-", 1)
+
+    try:
+        if start_text == "":
+            suffix_length = int(end_text)
+            if suffix_length <= 0:
+                raise ValueError
+
+            start = max(0, file_size - suffix_length)
+            end = file_size - 1
+        else:
+            start = int(start_text)
+            end = int(end_text) if end_text else file_size - 1
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=416,
+            detail="Invalid media range.",
+        ) from exc
+
+    if start < 0 or start >= file_size or end < start:
+        raise HTTPException(
+            status_code=416,
+            detail="Requested media range is not satisfiable.",
+            headers={"Content-Range": f"bytes */{file_size}"},
+        )
+
+    end = min(end, file_size - 1)
+
+    return start, end, True
 
 class MeetingLinkRequest(BaseModel):
     url: str
@@ -175,8 +238,18 @@ async def transcribe_meeting_link(
             summary=summary,
             status="completed",
         )
+
         db.add(meeting)
+        db.flush()
+
+        # Store and verify the original video in Aiven.
+        store_media_file(db, meeting_id, video_path)
+
         db.commit()
+        media_committed = True
+
+        # Delete the local video only after a successful commit.
+        video_path.unlink(missing_ok=True)
 
         return {
             "meeting_id": meeting_id,
@@ -203,8 +276,12 @@ async def transcribe_meeting_link(
         ) from error
     finally:
         db.close()
+
         if audio_path is not None:
             audio_path.unlink(missing_ok=True)
+
+        if media_committed and video_path is not None:
+            video_path.unlink(missing_ok=True)
 
 @router.post("/transcribe")
 async def transcribe_meeting(
@@ -281,7 +358,16 @@ async def transcribe_meeting(
         )
 
         db.add(meeting)
+        db.flush()
+
+        # Store the original uploaded file in Aiven.
+        store_media_file(db, meeting_id, video_path)
+
         db.commit()
+        media_committed = True
+
+        # Remove the original local file after successful verification and commit.
+        video_path.unlink(missing_ok=True)
 
         return {
             "meeting_id": meeting_id,
@@ -308,6 +394,9 @@ async def transcribe_meeting(
 
         if audio_path is not None and audio_path != video_path:
             audio_path.unlink(missing_ok=True)
+
+        if media_committed and video_path is not None:
+            video_path.unlink(missing_ok=True)
 
 @router.post("/documents")
 async def upload_document(
@@ -370,7 +459,15 @@ async def upload_document(
         )
 
         db.add(meeting)
+        db.flush()
+
+        # Store and verify the original PDF or DOCX in Aiven.
+        store_media_file(db, meeting_id, document_path)
+
         db.commit()
+        media_committed = True
+
+        document_path.unlink(missing_ok=True)
 
         return {
             "meeting_id": meeting_id,
@@ -397,6 +494,9 @@ async def upload_document(
     finally:
         db.close()
         await file.close()
+
+        if media_committed and document_path is not None:
+            document_path.unlink(missing_ok=True)
 
 @router.get("")
 def get_all_meetings(request: Request):
@@ -557,17 +657,116 @@ def get_meeting_video(meeting_id: str, request: Request):
                 detail="Meeting not found.",
             )
 
+        metadata = get_aiven_media_metadata(db, meeting_id)
+
+        # Prefer Aiven media.
+        if metadata:
+            filename = metadata["original_filename"] or meeting.filename
+            extension = Path(filename).suffix.lower()
+            media_type = (
+                metadata["content_type"]
+                or mimetypes.guess_type(filename)[0]
+                or "application/octet-stream"
+            )
+            file_size = metadata["file_size"]
+
+            # DOCX preview requires a temporary local copy for extraction.
+            if extension == ".docx":
+                with tempfile.NamedTemporaryFile(
+                    suffix=".docx",
+                    delete=False,
+                ) as temp_file:
+                    temp_path = Path(temp_file.name)
+
+                    for chunk in iter_media_chunks(
+                        meeting_id, 0, file_size
+                    ):
+                        temp_file.write(chunk)
+
+                try:
+                    document_text = extract_document_text(str(temp_path))
+                    safe_text = html.escape(document_text)
+
+                    preview_html = f"""
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport"
+                              content="width=device-width, initial-scale=1.0">
+                        <title>Document Preview</title>
+                        <style>
+                            body {{
+                                font-family: Arial, sans-serif;
+                                line-height: 1.7;
+                                color: #1f2937;
+                                padding: 24px;
+                                margin: 0;
+                                background: #ffffff;
+                                overflow-wrap: anywhere;
+                            }}
+                            pre {{
+                                white-space: pre-wrap;
+                                font-family: inherit;
+                                margin: 0;
+                            }}
+                        </style>
+                    </head>
+                    <body><pre>{safe_text}</pre></body>
+                    </html>
+                    """
+
+                    return HTMLResponse(content=preview_html)
+
+                finally:
+                    temp_path.unlink(missing_ok=True)
+
+            range_header = request.headers.get("range")
+
+            start, end, partial = parse_media_range(
+                range_header,
+                file_size,
+            )
+
+            content_length = end - start + 1
+
+            headers = {
+                "Accept-Ranges": "bytes",
+                "Content-Length": str(content_length),
+                "Content-Disposition": "inline",
+                "Cache-Control": "private, no-store",
+            }
+
+            if partial:
+                headers["Content-Range"] = (
+                    f"bytes {start}-{end}/{file_size}"
+                )
+
+            status_code = 206 if partial else 200
+
+            # Stream PDFs, audio and video from Aiven.
+            return StreamingResponse(
+                iter_media_chunks(
+                    meeting_id,
+                    start,
+                    content_length,
+                ),
+                status_code=status_code,
+                media_type=media_type,
+                headers=headers,
+            )
+
+        # Compatibility fallback for media not yet stored in Aiven.
         original_path = Path(meeting.video_path)
 
         if not original_path.is_file():
             raise HTTPException(
                 status_code=404,
-                detail="Media file not found.",
+                detail="Media file not found in Aiven or local storage.",
             )
 
         extension = original_path.suffix.lower()
 
-        # PDF documents can be displayed directly in the iframe.
         if extension == ".pdf":
             return FileResponse(
                 path=original_path,
@@ -575,79 +774,20 @@ def get_meeting_video(meeting_id: str, request: Request):
                 content_disposition_type="inline",
             )
 
-        # DOCX files are not reliably rendered by browser iframes.
         if extension == ".docx":
             document_text = extract_document_text(str(original_path))
             safe_text = html.escape(document_text)
 
-            preview_html = f"""
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Document Preview</title>
-                <style>
-                    body {{
-                        font-family: Arial, sans-serif;
-                        line-height: 1.7;
-                        color: #1f2937;
-                        padding: 24px;
-                        margin: 0;
-                        background: #ffffff;
-                        overflow-wrap: anywhere;
-                    }}
-                    pre {{
-                        white-space: pre-wrap;
-                        font-family: inherit;
-                        margin: 0;
-                    }}
-                </style>
-            </head>
-            <body>
-                <pre>{safe_text}</pre>
-            </body>
-            </html>
-            """
-
-            return HTMLResponse(content=preview_html)
-
-        audio_types = {
-            ".mp3": "audio/mpeg",
-            ".wav": "audio/wav",
-            ".m4a": "audio/mp4",
-            ".ogg": "audio/ogg",
-            ".flac": "audio/flac",
-            ".aac": "audio/aac",
-        }
-
-        if extension in audio_types:
-            media_path = original_path
-            media_type = audio_types[extension]
-
-        else:
-            mp4_path = original_path.with_suffix(".mp4")
-            media_path = (
-                mp4_path if mp4_path.is_file() else original_path
-            )
-
-            video_types = {
-                ".mp4": "video/mp4",
-                ".webm": "video/webm",
-                ".mov": "video/quicktime",
-                ".mkv": "video/x-matroska",
-                ".avi": "video/x-msvideo",
-                ".m4v": "video/x-m4v",
-            }
-
-            media_type = video_types.get(
-                media_path.suffix.lower(),
-                "application/octet-stream",
+            return HTMLResponse(
+                content=f"<html><body><pre>{safe_text}</pre></body></html>"
             )
 
         return FileResponse(
-            path=media_path,
-            media_type=media_type,
+            path=original_path,
+            media_type=(
+                mimetypes.guess_type(original_path.name)[0]
+                or "application/octet-stream"
+            ),
             content_disposition_type="inline",
         )
 
@@ -685,9 +825,22 @@ def delete_meeting(meeting_id: str, request: Request):
             MeetingQuestion.meeting_id == meeting_id
         ).delete(synchronize_session=False)
 
+        # Delete the Aiven media record.
+        db.execute(
+            text("""
+                DELETE FROM meeting_media
+                WHERE meeting_id = :meeting_id
+            """),
+            {"meeting_id": meeting_id},
+        )
+
+        video_path = Path(meeting.video_path)
+        mp4_path = video_path.with_suffix(".mp4")
+
         db.delete(meeting)
         db.commit()
 
+        # Remove any remaining legacy local copies.
         for path in {video_path, mp4_path}:
             if path.is_file():
                 path.unlink()
