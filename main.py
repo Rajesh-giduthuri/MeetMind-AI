@@ -6,16 +6,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, RedirectResponse
-from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
 from starlette.middleware.sessions import SessionMiddleware
 
 from database import init_db
-from summary_service import generate_summary
 from routers.auth import router as auth_router
 from routers.meetings import router as meetings_router
 from routers.qa import router as qa_router
@@ -89,14 +86,22 @@ class NavigationProtectionMiddleware(BaseHTTPMiddleware):
 app.add_middleware(NavigationProtectionMiddleware)
 
 # Session configuration
-app.add_middleware(
-    SessionMiddleware,
-    secret_key=os.getenv("SESSION_SECRET", ""),
-    same_site="lax",
-    https_only=False,  # Local development only
-    max_age=60 * 60 * 8,  # 8-hour session
+SESSION_SECRET = os.getenv("SESSION_SECRET")
+
+if not SESSION_SECRET:
+    raise RuntimeError("SESSION_SECRET is missing from environment variables")
+
+SESSION_HTTPS_ONLY = (
+    os.getenv("SESSION_HTTPS_ONLY", "false").lower() == "true"
 )
 
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=SESSION_SECRET,
+    same_site="lax",
+    https_only=SESSION_HTTPS_ONLY,
+    max_age=60 * 60 * 8,
+)
 
 # Initialize database
 init_db()
@@ -107,11 +112,6 @@ async def home():
     print("ROOT ROUTE: Serving index.html")
     print("FILE PATH:", FRONTEND_DIR / "index.html")
     return FileResponse(FRONTEND_DIR / "index.html")
-
-# # Public landing page
-# @app.get("/")
-# async def home():
-#     return FileResponse(FRONTEND_DIR / "index.html")
 
 
 # Authentication page

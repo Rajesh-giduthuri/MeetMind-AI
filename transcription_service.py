@@ -9,7 +9,6 @@ from groq import Groq
 
 import re
 import requests
-from pathlib import Path
 from urllib.parse import urlparse
 from fastapi import HTTPException
 load_dotenv()
@@ -101,7 +100,7 @@ def get_audio_duration(audio_path: Path) -> float:
 
 
 def transcribe_audio(audio_path: Path) -> dict:
-    """Transcribe audio in two-minute chunks with absolute timestamps."""
+    """Transcribe audio in one-minute chunks with absolute timestamps."""
     if client is None:
         raise RuntimeError("GROQ_API_KEY is missing from .env")
 

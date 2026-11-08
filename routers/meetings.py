@@ -10,7 +10,6 @@ from pydantic import BaseModel, Field
 from fastapi import APIRouter, File, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse
 from database import SessionLocal
-from models import Meeting
 from models import Meeting, MeetingQuestion
 from transcription_service import (
     extract_audio,
@@ -22,7 +21,7 @@ import mimetypes
 from document_service import extract_document_text
 from summary_service import generate_summary
 from report_service import generate_pdf_report, generate_docx_report
-from fastapi.responses import StreamingResponse, Response
+from fastapi.responses import StreamingResponse, Response 
 from sqlalchemy import text
 from media_storage import store_media_file, iter_media_chunks
 
@@ -179,6 +178,8 @@ async def transcribe_meeting_link(
 
     db = SessionLocal()
     audio_path = None
+    video_path = None
+    media_committed = False
 
     try:
         upload_dir = get_user_upload_dir(user_id)
@@ -314,6 +315,8 @@ async def transcribe_meeting(
 
     db = SessionLocal()
     audio_path = None
+    video_path = None
+    media_committed = False
 
     try:
         last_meeting = db.query(Meeting.id).filter(
@@ -421,6 +424,7 @@ async def upload_document(
 
     db = SessionLocal()
     document_path = None
+    media_committed = False
 
     try:
         last_meeting = db.query(Meeting.id).filter(

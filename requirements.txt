@@ -16,3 +16,4 @@ email-validator
 itsdangerous
 pydantic
 psycopg[binary]
+pydub
