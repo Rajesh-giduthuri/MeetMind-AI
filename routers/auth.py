@@ -14,7 +14,6 @@ import secrets
 import string
 
 oauth_config = Config(".env")
-
 oauth = OAuth(oauth_config)
 
 oauth.register(
@@ -27,20 +26,7 @@ oauth.register(
     client_kwargs={"scope": "openid email profile"},
 )
 
-oauth = OAuth(oauth_config)
-
-oauth.register(
-    name="google",
-    client_id=oauth_config("GOOGLE_CLIENT_ID"),
-    client_secret=oauth_config("GOOGLE_CLIENT_SECRET"),
-    server_metadata_url=(
-        "https://accounts.google.com/.well-known/openid-configuration"
-    ),
-    client_kwargs={"scope": "openid email profile"},
-)
-
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
-
 
 class RegisterRequest(BaseModel):
     username: str = Field(min_length=3, max_length=50)
