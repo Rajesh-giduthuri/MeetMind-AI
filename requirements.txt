@@ -1,4 +1,3 @@
-
 fastapi
 uvicorn[standard]
 python-multipart
@@ -16,4 +15,4 @@ email-validator
 itsdangerous
 pydantic
 psycopg[binary]
-pydub
+pwdlib[argon2]
