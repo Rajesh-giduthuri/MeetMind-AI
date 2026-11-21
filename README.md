@@ -192,3 +192,8 @@ The discussed deployment architecture is:
 - **Aiven PostgreSQL:** production database.
 - **Groq:** configured transcription and AI services.
 - **Google Cloud Console:** Google OAuth client and callback configuration.
+
+## Live Demo
+
+**Try MeetMind AI here:** 
+[https://meetmind-ai-0lrb.onrender.com](https://meetmind-ai-0lrb.onrender.com)
